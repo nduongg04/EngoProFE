@@ -8,17 +8,18 @@ const config: Config = {
         "./app/**/*.{js,ts,jsx,tsx,mdx}",
     ],
     theme: {
-    	extend: {
-    		colors: {
-    			gray: '#5B5B5B',
-				lightGreen: '#49BBBD',
-    		},
-    		borderRadius: {
-    			lg: 'var(--radius)',
-    			md: 'calc(var(--radius) - 2px)',
-    			sm: 'calc(var(--radius) - 4px)'
-    		}
-    	}
+        extend: {
+            colors: {
+                gray: "#5B5B5B",
+                lightGreen: "#49BBBD",
+            },
+            borderRadius: {
+                lg: "var(--radius)",
+                md: "calc(var(--radius) - 2px)",
+                sm: "calc(var(--radius) - 4px)",
+            },
+            
+        },
     },
     plugins: [require("tailwindcss-animate")],
 };

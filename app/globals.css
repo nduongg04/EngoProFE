@@ -2,18 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
-
-
-@layer utilities {
-	.text-balance {
-		text-wrap: balance;
-	}
+* {
+    box-sizing: border-box;
 }
 
+@layer components {
+    .button {
+        @apply m-1 h-full min-h-10 bg-lightGreen from-lightGreen to-blue-600 transition-colors duration-300 hover:animate-pulse hover:bg-gradient-to-r !important;
+    }
+    .text-primary {
+        @apply font-medium transition-colors duration-300 hover:text-lightGreen;
+    }
+    .transition-primary {
+        @apply transition-colors duration-300;
+    }
+}
 
+@layer utilities {
+    .text-balance {
+        text-wrap: balance;
+    }
+}
 
 @layer base {
-  :root {
-		--radius: 0.5rem;
-	}
+    :root {
+        --radius: 0.5rem;
+    }
 }

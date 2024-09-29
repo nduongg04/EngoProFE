@@ -1,9 +1,9 @@
-import HeaderHome from "@/components/HeaderHome";
+import HeaderHomeWhite from "@/components/HeaderHomeWhite";
 
 const AIQuestions = () => {
     return (
         <main className="relative flex min-h-screen w-full flex-col">
-            <HeaderHome />
+            <HeaderHomeWhite />
             <div>abc</div>
         </main>
     );
