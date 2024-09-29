@@ -1,11 +1,11 @@
-import HeaderHome from "@/components/HeaderHome";
+import HeaderHomeWhite from "@/components/HeaderHomeWhite";
 
 const Vocabularies = () => {
-  return (
-	<main className="relative flex min-h-screen w-full flex-col">
-		<HeaderHome />
-		<div>abc</div>
-	</main>
-  )
+    return (
+        <main className="relative flex min-h-screen w-full flex-col">
+            <HeaderHomeWhite />
+            <div>abc</div>
+        </main>
+    );
 };
 export default Vocabularies;

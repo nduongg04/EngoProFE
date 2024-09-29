@@ -1,10 +1,9 @@
-import HeaderHome from "@/components/HeaderHome";
+import HeaderHomeWhite from "@/components/HeaderHomeWhite";
 
 export default function Home() {
     return (
-        <main className="relative flex flex-col min-h-screen w-full">
-            <HeaderHome />
-			<div>abc</div>
+        <main className="relative flex min-h-screen w-full flex-col">
+            <HeaderHomeWhite />
         </main>
     );
 }
