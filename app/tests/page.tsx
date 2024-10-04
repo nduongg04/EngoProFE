@@ -1,10 +1,40 @@
+"use client";
+
 import HeaderHomeWhite from "@/components/HeaderHomeWhite";
 import TestList from "@/components/TestList";
 import TestSidebar from "@/components/TestSidebar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useState } from "react";
 
 const Tests = () => {
+    const [exams, setExams] = useState([
+        {
+            type: "TOEIC",
+            title: "Cambrige 18",
+            maxScore: 990,
+            questionCount: 120,
+            partCount: 4,
+            tags: ["TOEIC", "Cambrige", "18"],
+        },
+		{
+			type: "IELTS",
+            title: "Cambrige 18",
+            maxScore: 9,
+            questionCount: 120,
+            partCount: 4,
+            tags: ["IELTS", "Cambrige", "18"],
+        },
+        {
+            type: "TOEIC",
+            title: "Cambrige 18",
+            maxScore: 990,
+            questionCount: 120,
+            partCount: 4,
+            tags: ["TOEIC", "Cambrige", "18"],
+        },
+    ]);
+
     return (
         <main className="relative flex min-h-screen w-full flex-col gap-10">
             <HeaderHomeWhite />
@@ -18,7 +48,7 @@ const Tests = () => {
                 </div>
                 <div className="flex w-full flex-1 justify-between">
                     <TestSidebar />
-                    <TestList />
+                    <TestList exams={exams} />
                 </div>
             </div>
         </main>
