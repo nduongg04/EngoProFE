@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Roboto_Condensed } from "next/font/google";
+import { AiChat } from "@/components/AIChatIcon";
 
 export const metadata: Metadata = {
     title: "EngoPro",
@@ -8,8 +9,7 @@ export const metadata: Metadata = {
 };
 
 const robotoCondensed = Roboto_Condensed({
-	subsets: ["latin"],
-
+    subsets: ["latin"],
 });
 
 export default function RootLayout({
@@ -19,7 +19,9 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en" className={robotoCondensed.className}>
-            <body className="antialiased">{children}</body>
+            <body className="antialiased">
+                {children} <AiChat />
+            </body>
         </html>
     );
 }

@@ -12,13 +12,17 @@ const config: Config = {
             colors: {
                 gray: "#5B5B5B",
                 lightGreen: "#49BBBD",
+                darkGreen: "#194F4F",
             },
             borderRadius: {
                 lg: "var(--radius)",
                 md: "calc(var(--radius) - 2px)",
                 sm: "calc(var(--radius) - 4px)",
             },
-            
+
+            boxShadow: {
+                "3xl": "0 10px 40px -15px black",
+            },
         },
     },
     plugins: [require("tailwindcss-animate")],
