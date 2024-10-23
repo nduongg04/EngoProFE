@@ -6,6 +6,8 @@ import { HumanMessage } from "./ui/human-message";
 import { AIIcon } from "./ui/ai-icon";
 import { AIMessage } from "./ui/ai-message";
 
+import "dotenv/config";
+
 type AiChatMessage = {
     role: string;
     message: string;
@@ -32,6 +34,7 @@ export const AiChat = () => {
     const ref = useRef<HTMLDivElement>(null);
     const ref2 = useRef<HTMLDivElement>(null);
     const msgRender = useRef<HTMLDivElement>(null);
+    const baseurl = process.env.BASE_URL;
 
     function onClick() {
         setIsShowChat(true);
@@ -91,7 +94,7 @@ export const AiChat = () => {
             <div
                 ref={ref}
                 className={cn(
-                    "shadow-3xl h-fit w-[60px] cursor-pointer justify-end rounded-[40px] bg-white p-2 transition-all duration-500 ease-in-out hover:w-[150px]",
+                    "h-fit w-[60px] cursor-pointer justify-end rounded-[40px] bg-white p-2 shadow-3xl transition-all duration-500 ease-in-out hover:w-[150px]",
                     isIconDisapear ? "hidden" : "flex",
                 )}
                 onClick={onClick}
@@ -121,12 +124,12 @@ export const AiChat = () => {
             <div
                 ref={ref2}
                 className={cn(
-                    "shadow-3xl rounded-[32px] bg-white transition-all duration-500 ease-in-out",
+                    "rounded-[32px] bg-white shadow-3xl transition-all duration-500 ease-in-out",
                     isShowChat ? "h-[429px] w-[320px]" : "h-0 w-0",
                 )}
             >
                 <div className={isShowChat ? "flex h-full flex-col" : "hidden"}>
-                    <div className="bg-darkGreen relative flex h-[70px] w-full items-center rounded-tl-[32px] rounded-tr-[32px] p-3">
+                    <div className="relative flex h-[70px] w-full items-center rounded-tl-[32px] rounded-tr-[32px] bg-darkGreen p-3">
                         <AIIcon />
                         <div className="m-2 flex flex-col gap-1">
                             <p className="font-bold text-white">
