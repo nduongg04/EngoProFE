@@ -5,8 +5,8 @@ import { useEffect, useRef, useState } from "react";
 import { HumanMessage } from "./ui/human-message";
 import { AIIcon } from "./ui/ai-icon";
 import { AIMessage } from "./ui/ai-message";
-
-import "dotenv/config";
+import { io, Socket } from "socket.io-client";
+import { AILoading } from "./ui/ai-loading";
 
 type AiChatMessage = {
     role: string;
@@ -34,8 +34,11 @@ export const AiChat = () => {
     const ref = useRef<HTMLDivElement>(null);
     const ref2 = useRef<HTMLDivElement>(null);
     const msgRender = useRef<HTMLDivElement>(null);
-    const baseurl = process.env.BASE_URL;
+    const baseUrl = process.env.BASE_URL;
+    const [socket, setSocket] = useState<Socket | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
 
+    //--------------------------------Function----------------------//
     function onClick() {
         setIsShowChat(true);
     }
@@ -45,10 +48,24 @@ export const AiChat = () => {
     }
 
     function onSend() {
-        setMessageList([...msgList, { role: "human", message: message }]);
-        setMessage("");
+        if (!isLoading) {
+            if (socket != null) {
+                setMessageList([
+                    ...msgList,
+                    { role: "human", message: message },
+                ]);
+                const data = {
+                    message: message,
+                };
+                socket.emit("chat_request", data);
+                setIsLoading(true);
+                setMessage("");
+            }
+        }
     }
+    //--------------------------------Function----------------------//
 
+    //--------------------------------Animation---------------------//
     useEffect(() => {
         const handleResize = () => {
             if (ref.current) {
@@ -88,7 +105,51 @@ export const AiChat = () => {
             behavior: "smooth",
         });
     }, [msgList, isShowChat]);
+    //--------------------------------Animation---------------------//
 
+    //--------------------------------Socket-----------------------//
+    useEffect(() => {
+        const newSocket = io(baseUrl);
+        setSocket(newSocket);
+        return () => {
+            newSocket.disconnect();
+            socket?.disconnect();
+        };
+    }, []);
+
+    useEffect(() => {
+        if (socket != null) {
+            socket.on("chat_response", (msg) => {
+                const data: AiChatMessage = {
+                    role: "AI",
+                    message: msg,
+                };
+                console.log(data.message);
+                setIsLoading(false);
+                setMessageList((prev) => [...prev, data]);
+            });
+        }
+
+        return () => {
+            socket?.off("chat_response");
+        };
+    }, [socket, msgList, setMessageList]);
+    //--------------------------------Socket-----------------------//
+
+    // useEffect(() => {
+    //     setTimeout(() => {
+    //         if (isLoading) {
+    //             setIsLoading(false);
+    //             const data: AiChatMessage = {
+    //                 role: "AI",
+    //                 message:
+    //                     "Xin lỗi, đã có lỗi xảy ra, vui lòng check internet của bạn!!",
+    //             };
+
+    //             setMessageList((prev) => [...prev, data]);
+    //         }
+    //     }, 10000);
+    // }, [isLoading, msgList]);
     return (
         <div className="absolute bottom-[10px] right-[10px]">
             <div
@@ -190,6 +251,7 @@ export const AiChat = () => {
                                 <AIMessage message={obj.message} key={index} />
                             ),
                         )}
+                        {isLoading ? <AILoading /> : <></>}
                     </div>
 
                     {/* Input message */}
@@ -219,7 +281,7 @@ export const AiChat = () => {
                         >
                             <path
                                 d="M1.00729 9.94998L13.5625 5.5416C13.6923 5.49631 13.8029 5.42076 13.8807 5.32436C13.9585 5.22796 14 5.11495 14 4.99939C14 4.88383 13.9585 4.77082 13.8807 4.67442C13.8029 4.57802 13.6923 4.50247 13.5625 4.45718L1.00729 0.0488064C0.898579 0.00996472 0.779769 -0.00609619 0.661582 0.00207244C0.543396 0.0102411 0.429551 0.0423822 0.330319 0.0955965C0.231087 0.148811 0.149589 0.221424 0.093178 0.306885C0.0367669 0.392346 0.00721726 0.487967 0.00719495 0.58512L0 3.30205C0 3.59673 0.266213 3.85015 0.625961 3.88551L10.7924 4.99939L0.625961 6.10738C0.266213 6.14863 0 6.40206 0 6.69673L0.00719495 9.41366C0.00719495 9.8321 0.532427 10.1209 1.00729 9.94998Z"
-                                fill="#49BBBD"
+                                fill={isLoading ? "gray" : "#49BBBD"}
                             />
                         </svg>
                     </div>

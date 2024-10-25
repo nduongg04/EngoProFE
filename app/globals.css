@@ -16,6 +16,10 @@
     .transition-primary {
         @apply transition-colors duration-300;
     }
+    ol {
+        list-style: decimal;
+        padding-left: 1rem;
+    }
 }
 
 @layer utilities {
