@@ -48,20 +48,22 @@ export const AiChat = () => {
     }
 
     function onSend() {
-        if (!isLoading) {
-            if (socket != null) {
-                setMessageList([
-                    ...msgList,
-                    { role: "human", message: message },
-                ]);
-                const data = {
-                    message: message,
-                };
-                socket.emit("chat_request", data);
-                setIsLoading(true);
-                setMessage("");
-            }
-        }
+        // if (!isLoading) {
+        //     if (socket != null) {
+        //         setMessageList([
+        //             ...msgList,
+        //             { role: "human", message: message },
+        //         ]);
+        //         const data = {
+        //             message: message,
+        //         };
+        //         socket.emit("chat_request", data);
+        //         setIsLoading(true);
+        //         setMessage("");
+        //     }
+        // }
+        setMessageList([...msgList, { role: "human", message: message }]);
+        setMessage("");
     }
     //--------------------------------Function----------------------//
 
@@ -108,32 +110,32 @@ export const AiChat = () => {
     //--------------------------------Animation---------------------//
 
     //--------------------------------Socket-----------------------//
-    useEffect(() => {
-        const newSocket = io(baseUrl);
-        setSocket(newSocket);
-        return () => {
-            newSocket.disconnect();
-            socket?.disconnect();
-        };
-    }, []);
+    // useEffect(() => {
+    //     const newSocket = io(baseUrl);
+    //     setSocket(newSocket);
+    //     return () => {
+    //         newSocket.disconnect();
+    //         socket?.disconnect();
+    //     };
+    // }, []);
 
-    useEffect(() => {
-        if (socket != null) {
-            socket.on("chat_response", (msg) => {
-                const data: AiChatMessage = {
-                    role: "AI",
-                    message: msg,
-                };
-                console.log(data.message);
-                setIsLoading(false);
-                setMessageList((prev) => [...prev, data]);
-            });
-        }
+    // useEffect(() => {
+    //     if (socket != null) {
+    //         socket.on("chat_response", (msg) => {
+    //             const data: AiChatMessage = {
+    //                 role: "AI",
+    //                 message: msg,
+    //             };
+    //             console.log(data.message);
+    //             setIsLoading(false);
+    //             setMessageList((prev) => [...prev, data]);
+    //         });
+    //     }
 
-        return () => {
-            socket?.off("chat_response");
-        };
-    }, [socket, msgList, setMessageList]);
+    //     return () => {
+    //         socket?.off("chat_response");
+    //     };
+    // }, [socket, msgList, setMessageList]);
     //--------------------------------Socket-----------------------//
 
     // useEffect(() => {
@@ -151,7 +153,7 @@ export const AiChat = () => {
     //     }, 10000);
     // }, [isLoading, msgList]);
     return (
-        <div className="absolute bottom-[10px] right-[10px]">
+        <div className="fixed bottom-[10px] right-[10px]">
             <div
                 ref={ref}
                 className={cn(
