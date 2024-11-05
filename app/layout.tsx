@@ -3,7 +3,6 @@ import "./globals.css";
 import { Roboto_Condensed } from "next/font/google";
 import { AiChat } from "@/components/AIChatIcon";
 import StoreProvider from "./StoreProvider";
-
 export const metadata: Metadata = {
     title: "EngoPro",
     description: "AI-powered English learning website",
