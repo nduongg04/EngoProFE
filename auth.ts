@@ -74,7 +74,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                         profile,
                     };
                     const response = await fetch(
-                        `${process.env.BACKEND_URL}/api/auth/${account.provider}/callback`,
+                        `${process.env.BACKEND_URL}/auth/${account.provider}/callback`,
                         {
                             headers: {
                                 "Content-Type": "application/json",
@@ -83,18 +83,21 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                             body: JSON.stringify(body),
                         },
                     );
+                    console.log(response);
+                    
                     if (!response.ok) {
                         throw new Error("Failed to sign in with Google");
                     }
-                    const data = await response.json();
+										const data = await response.json();
                     console.log(data);
+                    
                     user.id = data.user._id;
                     user.username = data.user.username;
                     user.avatar = data.user.avatar;
                     user.email = data.user.email;
                     user.token = {
-                        access_token: data.access_token,
-                        refresh_token: data.refresh_token,
+                        access_token: data.accessToken,
+                        refresh_token: data.refreshToken,
                     };
                     user.vocabList = data.user.vocabList;
                     return true;
