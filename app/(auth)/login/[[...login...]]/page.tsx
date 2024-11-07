@@ -30,6 +30,10 @@ const formSchema = z.object({
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
+export const handleSocialLogin = (provider: string) => {
+	signIn(provider, { callbackUrl: "/" });
+};
+
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isPending, setIsPending] = useState(false);
@@ -180,7 +184,7 @@ export default function LoginPage() {
             variant="outline"
             type="button"
             className="h-8 w-full text-sm"
-            onClick={() => console.log("Google sign in")}
+            onClick={() => handleSocialLogin("google")}
           >
             <Icons.google className="mr-2 h-3 w-3" />
             Continue with Google

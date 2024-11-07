@@ -24,6 +24,7 @@ import { signUp } from "@/lib/actions/auth.action";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
 import { getMessage } from "@/lib/utils";
+import { handleSocialLogin } from "../../login/[[...login...]]/page";
 
 const formSchema = z
   .object({
@@ -280,7 +281,7 @@ export default function SignupPage() {
             variant="outline"
             type="button"
             className="h-8 w-full"
-            onClick={() => console.log("Google sign in")}
+            onClick={() => handleSocialLogin("google")}
           >
             <Icons.google className="mr-2 h-3 w-3" />
             Continue with Google

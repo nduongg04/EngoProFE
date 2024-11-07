@@ -3,10 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
 import { cn } from "../lib/utils";
 import Profile from "./Profile";
-import path from "path";
 
 const HeaderHomeWhite = () => {
   const pathName = usePathname();
