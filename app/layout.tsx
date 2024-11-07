@@ -1,25 +1,29 @@
+import { Toaster } from "@/components/ui/toaster";
 import type { Metadata } from "next";
-import "./globals.css";
 import { Roboto_Condensed } from "next/font/google";
+import AuthProvider from "./AuthProvider";
+import "./globals.css";
 
 export const metadata: Metadata = {
-    title: "EngoPro",
-    description: "AI-powered English learning website",
+  title: "EngoPro",
+  description: "AI-powered English learning website",
 };
 
 const robotoCondensed = Roboto_Condensed({
-	subsets: ["latin"],
-
+  subsets: ["latin"],
 });
 
 export default function RootLayout({
-    children,
+  children,
 }: Readonly<{
-    children: React.ReactNode;
+  children: React.ReactNode;
 }>) {
-    return (
-        <html lang="en" className={robotoCondensed.className}>
-            <body className="antialiased">{children}</body>
-        </html>
-    );
+  return (
+    <html lang="en" className={robotoCondensed.className}>
+      <body className="antialiased">
+        <Toaster />
+        <AuthProvider>{children}</AuthProvider>
+      </body>
+    </html>
+  );
 }
