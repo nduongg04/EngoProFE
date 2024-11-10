@@ -36,10 +36,10 @@ export const CustomComboBox = ({ data, type }: Props) => {
     return (
         <div className="relative flex flex-col gap-2">
             <div
-                className="flex w-[200px] cursor-pointer items-center rounded-[18px] border border-[#AAAAAA] px-3 py-2 italic text-black"
+                className="flex w-[200px] cursor-pointer items-center rounded-lg border border-[#AAAAAA] px-3 py-2 italic text-black"
                 onClick={onClick}
             >
-                <p className="flex flex-1">{selectedItem}</p>
+                <p className="flex flex-1 text-[16px]">{selectedItem}</p>
                 <svg
                     width="16"
                     height="14"

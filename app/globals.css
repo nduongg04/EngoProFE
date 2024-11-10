@@ -20,6 +20,15 @@
         list-style: decimal;
         padding-left: 1rem;
     }
+
+    .RadioGroupIndicator {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        position: relative;
+    }
 }
 
 @layer utilities {

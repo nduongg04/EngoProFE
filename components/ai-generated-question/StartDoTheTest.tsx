@@ -1,5 +1,11 @@
-import { setIsGenAI, setMinute, setQuestions, setSubject } from "@/lib/store/slice/ai_gen_slice";
+import {
+    setIsGenAI,
+    setMinute,
+    setQuestions,
+    setSubject,
+} from "@/lib/store/slice/ai_gen_slice";
 import { useAppDispatch, useAppSelector } from "@/lib/store/store";
+import Link from "next/link";
 
 export const StartDotheTestCompo = () => {
     const { subject, minute, questions, isGenAI } = useAppSelector(
@@ -9,9 +15,9 @@ export const StartDotheTestCompo = () => {
     //Method
     function hoanTacBtn() {
         dispatch(setIsGenAI({ isGenAI: false }));
-        dispatch(setSubject({subject: ""}))
-        dispatch(setMinute({minute: ""}))
-        dispatch(setQuestions({questions: ""}))
+        dispatch(setSubject({ subject: "" }));
+        dispatch(setMinute({ minute: "" }));
+        dispatch(setQuestions({ questions: "" }));
     }
 
     return (
@@ -25,9 +31,12 @@ export const StartDotheTestCompo = () => {
             <p className="text-[13px] italic">Được tạo bởi EngoProAI</p>
             <div className="mt-5 flex gap-8">
                 {isGenAI ? (
-                    <button className="rounded-sm bg-lightGreen px-7 py-1 font-bold text-white shadow-cus">
+                    <Link
+                        href={"/ai-generated-questions/test"}
+                        className="rounded-sm bg-lightGreen px-7 py-1 font-bold text-white shadow-cus"
+                    >
                         Bắt đầu
-                    </button>
+                    </Link>
                 ) : (
                     <></>
                 )}

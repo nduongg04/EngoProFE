@@ -11,17 +11,26 @@ export const CustomInput = () => {
     //Method
     function onChange(e: ChangeEvent<HTMLInputElement>) {
         const value = e.currentTarget.value;
-        if (value == null || value === "") {
+        const number = parseInt(value, 10);
+        if (number >= 1 && number <= 20) {
+            dispatch(setQuestions({ questions: value }));
+        } else if (number > 20) {
+            dispatch(setQuestions({ questions: "20" }));
+        } else if (number < 1) {
+            dispatch(setQuestions({ questions: "1" }));
         }
-        dispatch(setQuestions({ questions: value }));
+        if (value == null || value === "") {
+            dispatch(setQuestions({ questions: value }));
+        }
     }
     return (
         <div className="flex flex-col gap-2">
-            <div className="flex w-[200px] cursor-pointer items-center rounded-[18px] border border-[#AAAAAA] px-3 py-2 italic text-black">
+            <div className="flex w-[200px] cursor-pointer items-center rounded-lg border border-[#AAAAAA] px-3 py-2 italic text-black">
                 <input
                     type="number"
                     value={questions}
                     className="focus:outline-none"
+                    placeholder="1-20"
                     onChange={onChange}
                 />
             </div>

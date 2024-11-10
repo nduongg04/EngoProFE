@@ -6,6 +6,16 @@ import { CustomInput } from "./input-cus";
 import { StartDotheTestCompo } from "./StartDoTheTest";
 import { useAppDispatch, useAppSelector } from "@/lib/store/store";
 import { setIsGenAI, setIsValid } from "@/lib/store/slice/ai_gen_slice";
+import Loading from "react-loading";
+import { cn } from "@/lib/utils";
+import {
+    AnsweredQuestion,
+    setDataQuestion,
+} from "@/lib/store/slice/test_ai_slice";
+
+type APIResponse = {
+    data: AnsweredQuestion[];
+};
 
 export const AISecondSection = () => {
     const subjects: string[] = [
@@ -15,14 +25,29 @@ export const AISecondSection = () => {
         "Web development",
     ];
     const min: string[] = ["15 phút", "20 phút", "30 phút"];
+    const [isLoading, setIsLoading] = useState(false);
     const dispatch = useAppDispatch();
     const { isGenAI, minute, subject, questions } = useAppSelector(
         (state) => state.aiQuesSlice,
     );
-    function handleGenAI() {
+    const baseUrl = process.env.BASE_URL;
+    async function handleGenAI() {
         if (minute == "" || subject == "" || questions == "") {
             dispatch(setIsValid({ isValid: false }));
         } else {
+            const sub = subject.replace(" ", "%");
+            setIsLoading(true);
+            const response = await fetch(
+                `${baseUrl}/api/v1/aiquestion?questions=${questions}&subject=${sub}`,
+            );
+            setIsLoading(false);
+            if (response.ok) {
+                const res: APIResponse = await response.json();
+                const dataQuestions: AnsweredQuestion[] = res.data;
+                dispatch(setDataQuestion({ dataQuestions }));
+            } else {
+                console.log("Something wrong");
+            }
             dispatch(setIsValid({ isValid: true }));
             dispatch(setIsGenAI({ isGenAI: true }));
         }
@@ -31,10 +56,10 @@ export const AISecondSection = () => {
     return (
         <section className="flex h-screen flex-col items-center bg-white">
             <div className="mt-5 flex gap-9">
-                <div className="flex items-center justify-center gap-6 rounded-[20px] bg-white p-10 shadow-cus">
+                <div className="flex items-center justify-center gap-6 rounded-md bg-white p-10 shadow-cus">
                     <svg
-                        width="90"
-                        height="93"
+                        width="60"
+                        height="63"
                         viewBox="0 0 106 109"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
@@ -45,14 +70,14 @@ export const AISecondSection = () => {
                         />
                     </svg>
                     <div className="flex flex-col items-center justify-center gap-3 text-center">
-                        <p className="text-[25px] font-bold">Chủ đề</p>
+                        <p className="text-[18px] font-bold">Chủ đề</p>
                         <CustomComboBox data={subjects} type={"sub"} />
                     </div>
                 </div>
-                <div className="flex items-center justify-center gap-6 rounded-[20px] bg-white p-10 shadow-cus">
+                <div className="flex items-center justify-center gap-6 rounded-md bg-white p-10 shadow-cus">
                     <svg
-                        width="70"
-                        height="73"
+                        width="50"
+                        height="53"
                         viewBox="0 0 92 103"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
@@ -64,14 +89,14 @@ export const AISecondSection = () => {
                     </svg>
 
                     <div className="flex flex-col items-center justify-center gap-3 text-center">
-                        <p className="text-[25px] font-bold">Thời gian</p>
+                        <p className="text-[18px] font-bold">Thời gian</p>
                         <CustomComboBox data={min} type={"min"} />
                     </div>
                 </div>
-                <div className="flex items-center justify-center gap-6 rounded-[20px] bg-white p-10 shadow-cus">
+                <div className="flex items-center justify-center gap-6 rounded-md bg-white p-10 shadow-cus">
                     <svg
-                        width="61"
-                        height="60"
+                        width="41"
+                        height="40"
                         viewBox="0 0 81 80"
                         fill="none"
                         xmlns="http://www.w3.org/2000/svg"
@@ -85,7 +110,7 @@ export const AISecondSection = () => {
                     </svg>
 
                     <div className="flex flex-col items-center justify-center gap-3 text-center">
-                        <p className="text-[25px] font-bold">
+                        <p className="text-[18px] font-bold">
                             Số lượng câu hỏi
                         </p>
                         <CustomInput />
@@ -94,10 +119,22 @@ export const AISecondSection = () => {
             </div>
             <hr className="border-1 my-7 w-[40%] border-[#AAAA]" />
             <button
-                className="rounded-[10px] bg-[#97D2D3] px-[95px] py-2 text-[20px] font-bold text-white shadow-cus"
+                className={cn(
+                    "rounded-[10px] px-[95px] py-2 text-[17px] font-bold text-white shadow-cus",
+                    isLoading || isGenAI
+                        ? "cursor-default bg-[#B5C3C3]"
+                        : "bg-[#97D2D3]",
+                )}
+                disabled={isGenAI || isLoading}
                 onClick={handleGenAI}
             >
-                {isGenAI ? "Đã tạo câu hỏi" : "Bắt đầu tạo câu hỏi"}
+                {isGenAI ? (
+                    "Đã tạo câu hỏi"
+                ) : isLoading ? (
+                    <Loading type="spin" width={"25px"} height={"25px"} />
+                ) : (
+                    "Bắt đầu tạo câu hỏi"
+                )}
             </button>
             <StartDotheTestCompo />
         </section>
