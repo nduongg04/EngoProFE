@@ -4,8 +4,11 @@ import AIQuestion from "@/components/ai-generated-question/test/Question";
 import ResultQuestion from "@/components/ai-generated-question/test/result/QuestionResult";
 import ResultComponent from "@/components/ai-generated-question/test/result/ResultComponent";
 import { useAppSelector } from "@/lib/store/store";
+import { onpenLink } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 const ResultPage = () => {
+    const router = useRouter();
     const dataQuestions = useAppSelector(
         (state) => state.testAiSlice.dataQuestion,
     );
@@ -28,10 +31,20 @@ const ResultPage = () => {
                     </div>
                 </div>
                 <div className="flex gap-5">
-                    <button className="my-5 ml-[120px] rounded-md bg-darkGreen px-5 py-2 text-[18px] text-white">
+                    <button
+                        className="my-5 ml-[120px] rounded-md bg-darkGreen px-5 py-2 text-[18px] text-white"
+                        onClick={() => {
+                            onpenLink("https://forms.gle/2JEaL3JuUTGv8UDw7");
+                        }}
+                    >
                         Feedback
                     </button>
-                    <button className="my-5 rounded-md bg-[#B5C3C3] px-5 py-2 text-[18px] text-[#706868]">
+                    <button
+                        className="my-5 rounded-md bg-[#B5C3C3] px-5 py-2 text-[18px] text-[#706868]"
+                        onClick={() => {
+                            router.back();
+                        }}
+                    >
                         Back
                     </button>
                 </div>

@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 import {
     AnsweredQuestion,
     setDataQuestion,
+    setTimeAIQues,
 } from "@/lib/store/slice/test_ai_slice";
 
 type APIResponse = {
@@ -31,6 +32,7 @@ export const AISecondSection = () => {
         (state) => state.aiQuesSlice,
     );
     const baseUrl = process.env.BASE_URL;
+    let finalMin = "";
     async function handleGenAI() {
         if (minute == "" || subject == "" || questions == "") {
             dispatch(setIsValid({ isValid: false }));
@@ -45,6 +47,13 @@ export const AISecondSection = () => {
                 const res: APIResponse = await response.json();
                 const dataQuestions: AnsweredQuestion[] = res.data;
                 dispatch(setDataQuestion({ dataQuestions }));
+                finalMin =
+                    minute == "15 phút"
+                        ? "15:00"
+                        : minute == "20 phút"
+                          ? "20:00"
+                          : "30:00";
+                dispatch(setTimeAIQues({ time: finalMin }));
             } else {
                 console.log("Something wrong");
             }

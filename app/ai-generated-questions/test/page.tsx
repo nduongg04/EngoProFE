@@ -19,6 +19,7 @@ const TestAIView = () => {
         (state) => state.testAiSlice.dataQuestion,
     );
     const dispatch = useAppDispatch();
+    const { time } = useAppSelector((state) => state.testAiSlice);
     useEffect(() => {
         dispatch(resetCompletedQuestion());
         dispatch(resetMap());
@@ -53,7 +54,7 @@ const TestAIView = () => {
                     ))}
                 </div>
                 <div className="fixed right-0 w-[35%]">
-                    <ListQuestion number={dataQuestions.length} time="15:00" />
+                    <ListQuestion number={dataQuestions.length} />
                 </div>
             </div>
             <button
