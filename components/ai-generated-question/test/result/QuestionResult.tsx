@@ -31,7 +31,7 @@ const ResultQuestion = ({ number, question }: AIProp) => {
     }
 
     return (
-        <div className="relative ml-[120px] flex flex-col gap-5 rounded-lg px-10 py-7 shadow-cus">
+        <div className="relative ml-[120px] flex flex-col gap-5 rounded-lg bg-white px-10 py-7 shadow-cus">
             <Image
                 src="/assets/icons/missing_icon.svg"
                 alt=""

@@ -19,7 +19,7 @@ const AIQuestion = ({ number, question }: AIProp) => {
     let isChecked = false;
     const dispatch = useAppDispatch();
     return (
-        <div className="ml-[120px] flex flex-col gap-5 rounded-lg px-10 py-7 shadow-cus">
+        <div className="ml-[120px] flex flex-col gap-5 rounded-lg bg-white px-10 py-7 shadow-cus">
             <p className="text-[17px] font-semibold text-darkGreen">
                 Question {number}:
             </p>
