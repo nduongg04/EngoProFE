@@ -4,97 +4,163 @@ import { Button } from "@/components/ui/button";
 import BackComponent from "@/components/vocabularies/flashcard/BackComponent";
 import FrontComponent from "@/components/vocabularies/flashcard/FrontComponent";
 import HeaderVocab from "@/components/vocabularies/HeaderFlashCard";
+import { useAppSelector } from "@/lib/store/store";
 import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 import { forwardRef, MutableRefObject, useRef, useState } from "react";
 import { FlashcardArray } from "react-quizlet-flashcard";
 import FlashcardArrayProps from "react-quizlet-flashcard/dist/interfaces/IFlashcardArray";
 import { styleText } from "util";
 
 type FlashCardType = {
-    id: number;
-    frontHTML: string | JSX.Element;
-    backHTML: string | JSX.Element;
+  id: number;
+  frontHTML: string | JSX.Element;
+  backHTML: string | JSX.Element;
 };
 
-const arrayData: FlashCardType[] = [
-    {
-        id: 1,
-        frontHTML: <FrontComponent vocab="Vocabulary" />,
-        backHTML: <BackComponent trans="Từ vựng" />,
-    },
-    {
-        id: 1,
-        frontHTML: <FrontComponent vocab="Vocabulary1" />,
-        backHTML: <BackComponent trans="Từ vựng1" />,
-    },
-    {
-        id: 1,
-        frontHTML: <FrontComponent vocab="Vocabulary2" />,
-        backHTML: <BackComponent trans="Từ vựng2" />,
-    },
-];
 const FlashCardPage = () => {
-    const forwardRef = useRef<{
-        nextCard: () => void;
-        prevCard: () => void;
-        resetArray: () => void;
-    }>({ nextCard: () => {}, prevCard: () => {}, resetArray: () => {} });
-    const [isAllDone, setAllDone] = useState(false);
-    const flipCardRef = useRef<() => void>(() => {});
+  const router = useRouter();
+  const [isDaNho, setIsDaNho] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const { listVocabFlashCar } = useAppSelector((state) => state.vocabSlice);
+  const arrayData: FlashCardType[] = listVocabFlashCar.map((item, index) => {
+    return {
+      id: index + 1,
+      frontHTML: (
+        <FrontComponent
+          examples={item.examples}
+          vocab={item.vocab}
+          wordType={item.wordType}
+        />
+      ),
+      backHTML: (
+        <BackComponent
+          definition={item.definition}
+          vocab={item.vocab}
+          wordType={item.wordType}
+        />
+      ),
+    };
+  });
+  const forwardRef = useRef<{
+    nextCard: () => void;
+    prevCard: () => void;
+    resetArray: () => void;
+  }>({ nextCard: () => {}, prevCard: () => {}, resetArray: () => {} });
+  const [isAllDone, setAllDone] = useState(false);
+  const flipCardRef = useRef<() => void>(() => {});
 
-    return (
-        <div className="relative flex min-h-screen w-full flex-col items-center gap-5 bg-white">
-            <HeaderVocab />
-            <div
-                className={cn(
-                    "absolute min-h-screen w-full flex-col items-center justify-center gap-5 bg-white",
-                    isAllDone ? "hidden" : "flex",
-                )}
+  const handleNextCar = () => {
+    setCurrentIndex(currentIndex + 1);
+  };
+
+  const resetCar = () => {
+    setCurrentIndex(0);
+  };
+  return (
+    <div className="relative flex min-h-screen w-full flex-col items-center gap-5 bg-white">
+      <HeaderVocab />
+      {isAllDone ? (
+        <div
+          className={cn(
+            "absolute flex min-h-screen w-full flex-col items-center justify-center gap-5 bg-white",
+          )}
+        >
+          <p className="text-[35px] font-bold">All Done!!</p>
+          <p>
+            Bạn đã học được rất nhiều từ ngày hôm nay. Cùng bọn mình ôn tập lại
+            nhé
+          </p>
+          <div className="flex gap-3">
+            <button
+              className="rounded-lg bg-[#B5C3C3] px-20 py-3 text-white shadow-cus hover:opacity-80"
+              onClick={() => {
+                router.back();
+              }}
             >
-                <p className="text-[35px] font-bold">Flashcard - New words 1</p>
-                <FlashcardArray
-                    cards={arrayData}
-                    controls={false}
-                    showCount={true}
-                    FlashcardArrayStyle={{ width: "60%" }}
-                    forwardRef={
-                        forwardRef as MutableRefObject<{
-                            nextCard: () => void;
-                            prevCard: () => void;
-                            resetArray: () => void;
-                        }>
-                    }
-                    currentCardFlipRef={flipCardRef}
-                />
-                <div className="flex gap-3">
-                    <button
-                        className="rounded-lg bg-[#F04D6A] px-20 py-3 text-white shadow-cus hover:opacity-80"
-                        onClick={() => {
-                            if (forwardRef.current) {
-                                forwardRef.current.nextCard();
-                            }
-                        }}
-                    >
-                        Bỏ qua
-                    </button>
-                    <button
-                        className="rounded-lg bg-[#49BD70] px-20 py-3 text-white shadow-cus hover:opacity-80"
-                        onClick={() => {
-                            if (forwardRef.current && flipCardRef.current) {
-                                flipCardRef.current();
-                                setTimeout(() => {
-                                    forwardRef.current.nextCard();
-                                }, 5000);
-                            }
-                        }}
-                        disabled={false}
-                    >
-                        Đã nhớ
-                    </button>
-                </div>
-            </div>
+              Trở về
+            </button>
+            <button
+              className={cn(
+                "rounded-lg px-20 py-3 text-white shadow-cus",
+                "bg-[#49BD70] hover:opacity-80",
+              )}
+              onClick={() => {
+                router.replace("/vocabularies/games");
+              }}
+              disabled={isDaNho}
+            >
+              Tiếp tục chơi
+            </button>
+          </div>
         </div>
-    );
+      ) : (
+        <div
+          className={cn(
+            "absolute flex min-h-screen w-full flex-col items-center justify-center gap-5 bg-white",
+          )}
+        >
+          <p className="text-[35px] font-bold">Flashcard - New words 1</p>
+          <FlashcardArray
+            cards={arrayData}
+            controls={false}
+            showCount={true}
+            FlashcardArrayStyle={{ width: "60%" }}
+            forwardRef={
+              forwardRef as MutableRefObject<{
+                nextCard: () => void;
+                prevCard: () => void;
+                resetArray: () => void;
+              }>
+            }
+            currentCardFlipRef={flipCardRef}
+          />
+          <div className="flex gap-3">
+            <button
+              className="rounded-lg bg-[#F04D6A] px-20 py-3 text-white shadow-cus hover:opacity-80"
+              onClick={() => {
+                if (forwardRef.current) {
+                  if (currentIndex < arrayData.length - 1) {
+                    forwardRef.current.nextCard();
+                    handleNextCar();
+                  } else {
+                    setAllDone(true);
+                  }
+                }
+              }}
+            >
+              Bỏ qua
+            </button>
+            <button
+              className={cn(
+                "rounded-lg px-20 py-3 text-white shadow-cus",
+                isDaNho ? "bg-[#B5C3C3]" : "bg-[#49BD70] hover:opacity-80",
+              )}
+              onClick={() => {
+                if (forwardRef.current && flipCardRef.current) {
+                  flipCardRef.current();
+                  setIsDaNho(true);
+                  setTimeout(() => {
+                    if (currentIndex < arrayData.length - 1) {
+                      forwardRef.current.nextCard();
+                      handleNextCar();
+                    } else {
+                      setAllDone(true);
+                    }
+
+                    setIsDaNho(false);
+                  }, 5000);
+                }
+              }}
+              disabled={isDaNho}
+            >
+              Đã nhớ
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default FlashCardPage;
