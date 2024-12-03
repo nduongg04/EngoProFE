@@ -3,6 +3,7 @@
 import HeaderTestAIBar from "@/components/ai-generated-question/test/HeaderTestAIBar";
 import ListQuestion from "@/components/ai-generated-question/test/ListQuestion";
 import AIQuestion from "@/components/ai-generated-question/test/Question";
+import { disableAIChat } from "@/lib/store/slice/chat_slice";
 import {
   AnsweredQuestion,
   resetCompletedQuestion,
@@ -23,6 +24,7 @@ const TestAIView = () => {
   useEffect(() => {
     dispatch(resetCompletedQuestion());
     dispatch(resetMap());
+    dispatch(disableAIChat())
   }, []);
   useEffect(() => {
     if (dataQuestions.length == 0) {

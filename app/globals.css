@@ -37,6 +37,17 @@
   .list::-webkit-scrollbar {
     display: none; /* Safari and Chrome */
   }
+
+  .heroSection {
+    background-image: url("../public/assets/icons/hero-bg.svg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position-y: bottom;
+  }
+
+  .buttonGetStart {
+    background-color: rgba(255, 255, 255, 0.3);
+  }
 }
 
 @layer utilities {

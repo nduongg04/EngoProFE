@@ -3,13 +3,15 @@ import HeaderTestAIBar from "@/components/ai-generated-question/test/HeaderTestA
 import AIQuestion from "@/components/ai-generated-question/test/Question";
 import ResultQuestion from "@/components/ai-generated-question/test/result/QuestionResult";
 import ResultComponent from "@/components/ai-generated-question/test/result/ResultComponent";
-import { useAppSelector } from "@/lib/store/store";
+import { showAIChat } from "@/lib/store/slice/chat_slice";
+import { useAppDispatch, useAppSelector } from "@/lib/store/store";
 import { onpenLink } from "@/lib/utils";
 import { redirect, useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 const ResultPage = () => {
   const router = useRouter();
+  const dispatch = useAppDispatch();
   const dataQuestions = useAppSelector(
     (state) => state.testAiSlice.dataQuestion,
   );
@@ -19,6 +21,7 @@ const ResultPage = () => {
     if (dataQuestions.length == 0 || userAnswerMap.size == 0) {
       redirect("/error");
     }
+    dispatch(showAIChat());
   }, []);
   return (
     <div>

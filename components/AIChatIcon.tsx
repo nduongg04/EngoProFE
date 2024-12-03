@@ -8,6 +8,8 @@ import { AIMessage } from "./ui/ai-message";
 import { io, Socket } from "socket.io-client";
 import { AILoading } from "./ui/ai-loading";
 import { useSession } from "next-auth/react";
+import { useAppSelector } from "@/lib/store/store";
+import { stat } from "fs";
 
 type AiChatMessage = {
   role: string;
@@ -39,6 +41,7 @@ export const AiChat = () => {
   const baseUrl = process.env.BASE_URL;
   const [socket, setSocket] = useState<Socket | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const { isShowAIChat } = useAppSelector((state) => state.chatSlice);
   let timeout: NodeJS.Timeout;
   //--------------------------------Function----------------------//
   function onClick() {
@@ -154,7 +157,12 @@ export const AiChat = () => {
     }
   }, [isLoading]);
   return (
-    <div className="fixed bottom-[10px] right-[10px]">
+    <div
+      className={cn(
+        "fixed bottom-[10px] right-[10px]",
+        isShowAIChat ? "flex" : "hidden",
+      )}
+    >
       <div
         ref={ref}
         className={cn(

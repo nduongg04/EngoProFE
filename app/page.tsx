@@ -1,8 +1,9 @@
+import { AiChat } from "@/components/AIChatIcon";
 import HeaderHomeWhite from "@/components/HeaderHomeWhite";
 
 export default async function Home() {
-	return (
-		<main className="relative flex min-h-screen w-full flex-col">
+  return (
+    <main className="relative flex min-h-screen w-full flex-col">
       <HeaderHomeWhite />
     </main>
   );
