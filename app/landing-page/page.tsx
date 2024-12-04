@@ -2,6 +2,7 @@
 
 import HeaderHomeWhite from "@/components/HeaderHomeWhite";
 import DetailSection from "@/components/landing-page/DetailSection";
+import HeaderLandingPage from "@/components/landing-page/HeaderLandingPageBar";
 import HeroSection from "@/components/landing-page/HeroSection";
 import { disableAIChat } from "@/lib/store/slice/chat_slice";
 import { useAppDispatch } from "@/lib/store/store";
@@ -14,7 +15,7 @@ const LandingPage = () => {
   }, []);
   return (
     <main className="relative flex min-h-screen w-full flex-col">
-      <HeaderHomeWhite />
+      <HeaderLandingPage />
       <div className="absolute w-full">
         <HeroSection />
         <DetailSection />
