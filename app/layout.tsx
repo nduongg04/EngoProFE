@@ -1,8 +1,10 @@
 import { Toaster } from "@/components/ui/toaster";
 import type { Metadata } from "next";
 import { Roboto_Condensed } from "next/font/google";
+
 import { AiChat } from "@/components/AIChatIcon";
 import StoreProvider from "./StoreProvider";
+
 import AuthProvider from "./AuthProvider";
 import "./globals.css";
 
@@ -29,6 +31,7 @@ export default function RootLayout({
             {children} <AiChat />
           </StoreProvider>
         </AuthProvider>
+
       </body>
     </html>
   );

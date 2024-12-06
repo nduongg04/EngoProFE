@@ -1,10 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+
   env: {
     BASE_URL: "http://localhost:4000",
   },
+
   images: {
-    dangerouslyAllowSVG: true,
+
+     dangerouslyAllowSVG: true,
     remotePatterns: [
       {
         protocol: "https",

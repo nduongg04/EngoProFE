@@ -63,10 +63,12 @@ const Tests = () => {
       time: 120,
     },
   ]);
+
   const dispatch = useAppDispatch();
   useEffect(() => {
     dispatch(showAIChat());
   }, []);
+
   return (
     <main className="relative flex min-h-screen w-full flex-col gap-10">
       <HeaderHomeWhite />
