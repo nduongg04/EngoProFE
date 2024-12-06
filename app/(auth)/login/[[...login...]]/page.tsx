@@ -13,6 +13,7 @@ import { Icons } from "@/components/Icons";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
+
 	Form,
 	FormControl,
 	FormField,
@@ -25,13 +26,19 @@ import { useToast } from "@/hooks/use-toast";
 import { getMessage } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 
+import { useAppDispatch } from "@/lib/store/store";
+import { disableAIChat } from "@/lib/store/slice/chat_slice";
+
+
 const formSchema = z.object({
   email: z.string().email("Please enter a valid email"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
 export const handleSocialLogin = (provider: string) => {
+
 	signIn(provider, { callbackUrl: "/" });
+
 };
 
 export default function LoginPage() {
@@ -39,6 +46,11 @@ export default function LoginPage() {
   const [isPending, setIsPending] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
+
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(disableAIChat());
+  }, []);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -83,7 +95,9 @@ export default function LoginPage() {
   }
 
   return (
+
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-[#49BBBD]/20 to-white p-2" >
+
       <Card className="w-full max-w-md rounded-xl border border-[#49BBBD]/20 bg-white/95 shadow-lg backdrop-blur-sm transition-all duration-300 hover:shadow-xl">
         <CardHeader className="space-y-0 pb-2 pt-4 text-center">
           <h2 className="text-gray-800 text-2xl font-bold">Welcome Back</h2>
@@ -156,6 +170,7 @@ export default function LoginPage() {
                   Forgot password?
                 </Link>
               </div>
+
 							{form.formState.errors.root && (
                     <FormMessage className="text-red-500">
                         {form.formState.errors.root.message}

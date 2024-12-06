@@ -1,11 +1,14 @@
 "use client";
 
+import { AiChat } from "@/components/AIChatIcon";
 import HeaderHomeWhite from "@/components/HeaderHomeWhite";
 import TestList from "@/components/TestList";
 import TestSidebar from "@/components/TestSidebar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { showAIChat } from "@/lib/store/slice/chat_slice";
+import { useAppDispatch } from "@/lib/store/store";
+import { useEffect, useState } from "react";
 
 const Tests = () => {
   const [exams, setExams] = useState([
@@ -60,6 +63,11 @@ const Tests = () => {
       time: 120,
     },
   ]);
+
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(showAIChat());
+  }, []);
 
   return (
     <main className="relative flex min-h-screen w-full flex-col gap-10">
