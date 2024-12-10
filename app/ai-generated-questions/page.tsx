@@ -9,6 +9,7 @@ import { useAppDispatch } from "@/lib/store/store";
 import { useEffect } from "react";
 
 const AIQuestions = () => {
+
     const dispatch = useAppDispatch();
     useEffect(() => {
       dispatch(showAIChat());
