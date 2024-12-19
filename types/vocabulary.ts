@@ -1,9 +1,12 @@
 export interface VocabularySet {
   _id: string
   englishWord: string
-  vietnameseWord: string
-  subject: string
+  definition: string
+  wordType: string
+  example: string[]
+  subject: string | null
   createdAt: string
+  updatedAt: string
 }
 
 export interface VocabularyList {
@@ -15,3 +18,27 @@ export interface VocabularyList {
   date: string
   vocabularies: VocabularySet[]
 }
+
+export interface VocabularyWord {
+  id: string
+  englishWord: string
+  definition: string
+  wordType: string
+  examples: string[]
+}
+
+export interface MatchCard {
+  id: string
+  content: {
+    englishWord?: string
+    wordType?: string
+    example?: string[]
+    definition?: string
+  }
+  type: 'english' | 'vietnamese'
+  isMatched: boolean
+  isIncorrect: boolean
+  isSelected: boolean
+  originalId: string
+}
+

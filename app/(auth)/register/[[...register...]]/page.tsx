@@ -3,7 +3,9 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, Upload } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+
+import { useEffect, useState } from "react";
+
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
@@ -26,6 +28,10 @@ import { useRouter } from "next/navigation";
 import { getMessage } from "@/lib/utils";
 import { handleSocialLogin } from "../../login/[[...login...]]/page";
 
+import { useAppDispatch } from "@/lib/store/store";
+import { disableAIChat } from "@/lib/store/slice/chat_slice";
+
+
 const formSchema = z
   .object({
     avatar: z.instanceof(File).optional(),
@@ -46,6 +52,11 @@ export default function SignupPage() {
   const router = useRouter();
   const { toast } = useToast();
   const [isPending, setIsPending] = useState(false);
+
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(disableAIChat());
+  }, [dispatch]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),

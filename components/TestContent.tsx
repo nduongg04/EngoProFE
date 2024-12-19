@@ -12,6 +12,7 @@ import Part4 from "./Part4";
 import Part5 from "./Part5";
 import Part6 from "./Part6";
 import Part7 from "./Part7";
+import Loading from "./Loading";
 
 interface TestContentProps {
 	currentPart: number;
@@ -143,9 +144,7 @@ const TestContent: React.FC<TestContentProps> = React.memo(
 
 		if (isLoading) {
 			return (
-				<div className="flex items-center justify-center min-h-[400px]">
-					<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#49BBBD]" />
-				</div>
+				<Loading />
 			);
 		}
 

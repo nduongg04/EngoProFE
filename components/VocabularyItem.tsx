@@ -1,84 +1,63 @@
 'use client'
 
-import { Card } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Edit2, Volume2 } from 'lucide-react'
-import { useState } from "react"
+import { Card, CardContent } from "@/components/ui/card"
+import { VocabularySet } from "@/types/vocabulary"
+import { Edit, Trash2 } from "lucide-react"
+import { Button } from "./ui/button"
 
 interface VocabularyItemProps {
-  word: {
-    id: string
-    englishWord: string
-    definition: string
-    examples: string[]
-  }
+  word: VocabularySet
+  onEdit?: (word: VocabularySet) => void
+  onDelete?: (id: string) => void
 }
 
-export default function VocabularyItem({ word }: VocabularyItemProps) {
-  const [isPlaying, setIsPlaying] = useState(false)
-
-  // const playAudio = (accent: 'UK' | 'US') => {
-  //   setIsPlaying(true)
-  //   // Implement audio playback logic here
-  //   setTimeout(() => setIsPlaying(false), 1000)
-		
-  // }
-
+export default function VocabularyItem({ word, onEdit, onDelete }: VocabularyItemProps) {
   return (
-    <Card className="p-4">
-      <div className="flex items-start justify-between">
-        <div className="flex-1">
-          <div className="flex items-center gap-4 mb-2">
-            <span className="font-medium text-lg">{word.englishWord}</span>
-            {/* <div className="flex items-center gap-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 px-2 text-[#49BBBD]"
-                onClick={() => playAudio('UK')}
-                disabled={isPlaying}
-              >
-                <Volume2 className="h-4 w-4 mr-1" />
-                UK
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-8 px-2 text-[#49BBBD]"
-                onClick={() => playAudio('US')}
-                disabled={isPlaying}
-              >
-                <Volume2 className="h-4 w-4 mr-1" />
-                US
-              </Button>
-            </div> */}
+    <Card>
+      <CardContent className="p-6">
+        <div className="flex items-start justify-between">
+          <div className="flex-1">
+            <h3 className="text-lg font-medium">
+              {word.englishWord} <span className="text-sm text-muted-foreground">({word.wordType})</span>
+            </h3>
+            <p className="mt-2 text-muted-foreground">{word.definition}</p>
+            {word.example && word.example.length > 0 && (
+              <div className="mt-4">
+                <p className="font-medium">Examples:</p>
+                <ul className="ml-4 mt-1 list-disc space-y-1">
+                  {word.example.map((example, index) => (
+                    <li key={index} className="text-sm text-muted-foreground">
+                      {example}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
-
-          <div className="space-y-2">
-            <div>
-              <span className="font-medium">Định nghĩa:</span>
-              <p className="text-gray-600">{word.definition}</p>
-            </div>
-
-            <div>
-              <span className="font-medium">Ví dụ:</span>
-              <ul className="list-disc list-inside text-gray-600 space-y-1">
-                {word.examples.map((example, index) => (
-                  <li key={index}>{example}</li>
-                ))}
-              </ul>
-            </div>
+          <div className="flex gap-2">
+            {onEdit && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 hover:bg-[#49BBBD]/10"
+                onClick={() => onEdit(word)}
+              >
+                <Edit className="h-4 w-4" />
+              </Button>
+            )}
+            {onDelete && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 hover:bg-destructive/10 group"
+                onClick={() => onDelete(word._id)}
+              >
+                <Trash2 className="h-4 w-4 group-hover:text-red-500 transition-all duration-300" />
+              </Button>
+            )}
           </div>
         </div>
-
-        <Button
-          variant="ghost"
-          size="icon"
-          className="text-[#49BBBD]"
-        >
-          <Edit2 className="h-4 w-4" />
-        </Button>
-      </div>
+      </CardContent>
     </Card>
   )
 }

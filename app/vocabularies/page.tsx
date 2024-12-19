@@ -1,119 +1,142 @@
-'use client'
+"use client";
 
-import { useState } from "react";
-import HeaderHomeWhite from "@/components/HeaderHomeWhite";
-import { Calendar } from "@/components/ui/calendar"
-import { Card } from "@/components/ui/card"
-import VocabularyCard from "@/components/VocabularyCard";
+import { CreateWordForm } from "@/components/CreateWordForm";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
-import VocabularyModal from "@/components/VocabularyModal";
-import { VocabularyList } from "@/types/vocabulary";
+import { Calendar } from "@/components/ui/calendar";
+import { Card } from "@/components/ui/card";
+import VocabularyItem from "@/components/VocabularyItem";
+import { useToast } from "@/hooks/use-toast";
+import {
+  deleteVocabulary,
+  getVocabularies,
+} from "@/lib/actions/vocabulary.action";
+import { VocabularySet } from "@/types/vocabulary";
+import { BookOpen, GraduationCap } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
-export default function VocabulariesPage() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentAction, setCurrentAction] = useState<'create' | 'edit'>('create');
-  const [currentList, setCurrentList] = useState<VocabularyList | null>(null);
+export default function VocabularyListPage() {
+  const [vocabularies, setVocabularies] = useState<VocabularySet[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [editWord, setEditWord] = useState<VocabularySet | null>(null);
+  const [open, setOpen] = useState(false);
+  const { toast } = useToast();
+  const router = useRouter();
 
-  const mockData = [
-    {
-      _id: "1",
-      title: "Từ mới 1",
-      totalWords: 100,
-      rememberedWords: 50,
-      needToLearnWords: 50,
-      date: "19/10/2024",
-      vocabularies: []
-    },
-    {
-      _id: "2",
-      title: "Từ mới 2",
-      totalWords: 80,
-      rememberedWords: 30,
-      needToLearnWords: 50,
-      date: "20/10/2024",
-      vocabularies: []
-    },
-    {
-      _id: "3",
-      title: "Từ mới 3",
-      totalWords: 120,
-      rememberedWords: 60,
-      needToLearnWords: 60,
-      date: "21/10/2024",
-      vocabularies: []
-    },
-    {
-      _id: "3",
-      title: "Từ mới 3",
-      totalWords: 120,
-      rememberedWords: 60,
-      needToLearnWords: 60,
-      date: "21/10/2024",
-      vocabularies: []
-    },
-    {
-      _id: "3",
-      title: "Từ mới 3",
-      totalWords: 120,
-      rememberedWords: 60,
-      needToLearnWords: 60,
-      date: "21/10/2024",
-      vocabularies: []
-    },
-  ];
+  useEffect(() => {
+    fetchVocabularies();
+  }, []);
 
-  const handleCreate = () => {
-    setCurrentAction('create');
-    setCurrentList(null);
-    setIsModalOpen(true);
+  const fetchVocabularies = async () => {
+    try {
+      const data = await getVocabularies();
+      setVocabularies(data);
+    } catch (error) {
+      console.error("Error fetching vocabularies:", error);
+      toast({
+        title: "Error",
+        description: "Failed to fetch vocabularies. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleEdit = (list: VocabularyList) => {
-    setCurrentAction("edit");
-    setCurrentList(list);
-    setIsModalOpen(true);
+  const handleEdit = (word: VocabularySet) => {
+    setEditWord(word);
+    setOpen(true);
   };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    setCurrentList(null);
+  const handleEditSuccess = (updatedWord: VocabularySet) => {
+    setVocabularies((prev) =>
+      prev.map((word) => (word._id === updatedWord._id ? updatedWord : word)),
+    );
   };
 
-  const handleSave = (title: string) => {
-    // Placeholder function for saving data
-    console.log("Saving data:", title);
-    setIsModalOpen(false);
-    // Here you would typically update your state or make an API call
-    // For now, we'll just close the modal
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteVocabulary(id);
+      setVocabularies((prev) => prev.filter((word) => word._id !== id));
+      toast({
+        title: "Success",
+        description: "Word deleted successfully",
+        variant: "success",
+      });
+    } catch (error) {
+      console.error("Error deleting vocabulary:", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete word. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
+
+  const handleAddVocabulary = (newVocabulary: VocabularySet) => {
+    setVocabularies((prev) => [...prev, newVocabulary]);
+  };
+
+  if (loading) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="text-lg">Loading...</div>
+      </div>
+    );
+  }
 
   return (
-    <main className="relative flex min-h-screen w-full flex-col">
-      <HeaderHomeWhite />
+    <main className="relative flex w-full flex-1 flex-col">
       <div className="container flex flex-col justify-between gap-6 px-10 py-6 xl:flex-row">
-        <div className="flex flex-col items-center justify-between gap-6 w-full">
-          <div className="flex justify-between items-center w-full">
-            <h1 className="text-2xl font-semibold">Danh sách từ đã tạo</h1>
-            <Button onClick={handleCreate} className="bg-[#49BBBD] hover:bg-[#49BBBD]/90">
-              <Plus className="mr-2 h-4 w-4" /> Tạo danh sách mới
-            </Button>
+        <div className="flex w-full flex-col items-center gap-6">
+          <div className="flex w-full items-center justify-between">
+            <h1 className="text-2xl font-semibold">
+              Vocabulary List - {vocabularies.length} words
+            </h1>
+            <CreateWordForm
+              onSuccess={handleAddVocabulary}
+              editWord={editWord}
+              setEditWord={setEditWord}
+              open={open}
+              setOpen={setOpen}
+              onEdit={handleEditSuccess}
+            />
           </div>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 w-full">
-            {mockData.map((list) => (
-              <VocabularyCard key={list._id} list={list} onEdit={() => handleEdit(list)} />
+
+          <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-2">
+            {vocabularies.map((word) => (
+              <VocabularyItem
+                key={word._id}
+                word={word}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+              />
             ))}
           </div>
         </div>
-        <div className="max-w-fit">
-          <Card className="p-4">
+        <div className="space-y-4 md:col-span-4">
+          <Button className="h-12 w-full bg-[#49BBBD] text-white hover:bg-[#49BBBD]/90">
+            <BookOpen className="mr-2 h-5 w-5" />
+            Flashcards
+          </Button>
+
+          <Button className="h-12 w-full bg-[#49BBBD] text-white hover:bg-[#49BBBD]/90" onClick={() => router.push('/vocabularies/game')}>
+            <GraduationCap className="mr-2 h-5 w-5" />
+            Bài tập
+          </Button>
+
+          <Card className="max-w-fit p-4">
             <Calendar
               mode="single"
-              className="rounded-md"
+              className="w-full"
               selected={new Date()}
               modifiers={{
                 booked: [
                   new Date(),
+                  {
+                    from: new Date(2024, 10, 15),
+                    to: new Date(2024, 10, 20),
+                  },
                 ],
               }}
               modifiersStyles={{
@@ -126,14 +149,6 @@ export default function VocabulariesPage() {
           </Card>
         </div>
       </div>
-      <VocabularyModal
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-        onSave={handleSave}
-        action={currentAction}
-        list={currentList || null}
-      />
     </main>
   );
 }
-

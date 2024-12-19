@@ -1,138 +1,135 @@
-'use client'
+"use client";
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react'
-import { useParams } from 'next/navigation'
-import Header from '@/components/Header'
-import TimerSubmit from '@/components/TimerSubmit'
-import QuestionNavigation from '@/components/QuestionNavigation'
-import TestContent from '@/components/TestContent'
-import Footer from '@/components/Footer'
-import SubmitModal from '@/components/SubmitModal'
-import type { TestData } from '@/types/test'
+import { useState, useEffect } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { authenticatedFetch } from "@/lib/actions/fetch.action";
+import { getAllExamResult } from '@/lib/actions/exam.action';
+import Loading from '@/components/Loading';
 
-export default function TestPage() {
-  const { testId } = useParams()
-  const [currentPart, setCurrentPart] = useState(1)
-  const [answeredQuestions, setAnsweredQuestions] = useState<{
-    [key: number]: { questionNumber: number; selectedOption: string }[]
-  }>({})
-  const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false)
-  const [timeRemaining, setTimeRemaining] = useState(7200) // 2 hours in seconds
-  const [testData, setTestData] = useState<TestData | undefined>(undefined)
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+interface TestResult {
+  _id: string;
+  exam: {
+    _id: string;
+    testId: string;
+    testTitle: string;
+  };
+  score: number;
+  totalQuestions: number;
+  totalAnswered: number;
+  correctAnswers: number;
+  duration: number;
+  turn: number;
+  createdAt: string;
+  updatedAt: string;
+}
 
-	useEffect(() => {
-		console.log(answeredQuestions)
-	}, [answeredQuestions])
+export default function TestResultsPage() {
+  const [results, setResults] = useState<TestResult[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
-  const fetchTestData = useCallback(async () => {
-    try {
-      const response = await fetch(`/api/tests/${testId}`)
-      if (!response.ok) {
-        throw new Error('Không thể tải dữ liệu bài thi')
-      }
-      const data = await response.json()
-      setTestData(data)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Đã xảy ra lỗi')
-    } finally {
-      setIsLoading(false)
-    }
-  }, [testId])
-
+  const { testId } = useParams();
   useEffect(() => {
-    fetchTestData()
-  }, [fetchTestData])
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeRemaining((prevTime) => {
-        if (prevTime <= 0) {
-          clearInterval(timer)
-          return 0
+    const fetchResults = async () => {
+      try {
+        const data = await getAllExamResult(testId as string);
+        if (data.error) {
+          throw new Error("Không thể tải kết quả bài thi");
         }
-        return prevTime - 1
-      })
-    }, 1000)
+        setResults(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Đã xảy ra lỗi");
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-    return () => clearInterval(timer)
-  }, [])
+    fetchResults();
+  }, [testId]);
 
-  const handleSubmit = useCallback(() => {
-    const allQuestions = Object.values(answeredQuestions).flat()
-    const totalQuestions = testData ? testData.parts.reduce((acc, part) => acc + part.questions.length, 0) : 0
+  const handleStartTest = () => {
+    router.push(`/tests/${testId}/do`);
+  };
 
-    if (allQuestions.length < totalQuestions) {
-      setIsSubmitModalOpen(true)
-    } else {
-      // Submit the test
-      console.log('Bài thi đã được nộp', {
-        answeredQuestions,
-        testId
-      })
-    }
-  }, [answeredQuestions, testData, testId])
+  const handleViewResult = (testId: string, turn: number) => {
+    router.push(`/tests/result/${testId}?turn=${turn}`);
+  };
 
-  const memoizedTestContent = useMemo(() => (
-    <TestContent
-      currentPart={currentPart}
-      setCurrentPart={setCurrentPart}
-      answeredQuestions={answeredQuestions}
-      setAnsweredQuestions={setAnsweredQuestions}
-      testData={testData}
-      isLoading={isLoading}
-    />
-  ), [currentPart, answeredQuestions, testData, isLoading])
-
-  const memoizedQuestionNavigation = useMemo(() => (
-    testData && (
-      <QuestionNavigation
-        answeredQuestions={answeredQuestions}
-        testData={testData}
-      />
-    )
-  ), [currentPart, answeredQuestions, testData])
+  if (isLoading) {
+    return (
+      <Loading />
+    );
+  }
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="flex items-center justify-center min-h-screen">
         <div className="bg-white p-6 rounded-lg shadow-lg">
           <h2 className="text-xl font-semibold text-red-600 mb-2">Lỗi</h2>
           <p className="text-gray-600">{error}</p>
         </div>
       </div>
-    )
+    );
   }
 
+  const testTitle = results.length > 0 ? results[0].exam.testTitle : "TOEIC";
+
   return (
-    <div className="flex min-h-screen flex-col bg-gray-50">
-      <Header />
-      <main className="flex flex-1 flex-col md:flex-row">
-        <section className="flex-1 p-4 order-2 md:order-1">
-          {memoizedTestContent}
-        </section>
-        <aside className="w-full h-fit md:w-64 bg-white p-4 border-r border-gray-200 order-1 md:order-2">
-          <TimerSubmit
-            timeRemaining={timeRemaining} 
-            onSubmit={handleSubmit} 
-          />
-          {memoizedQuestionNavigation}
-        </aside>
-      </main>
-      <Footer />
-      <SubmitModal 
-        isOpen={isSubmitModalOpen} 
-        onClose={() => setIsSubmitModalOpen(false)}
-        onConfirm={() => {
-          console.log('Bài thi đã được nộp', {
-            answeredQuestions,
-            testId
-          })
-          setIsSubmitModalOpen(false)
-        }}
-      />
+    <div className="container mx-auto px-4 py-8">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-3xl font-bold text-[#49BBBD]">Kết Quả Bài Kiểm Tra: {testTitle}</h1>
+        <Button 
+          onClick={handleStartTest}
+          className="bg-[#49BBBD] hover:bg-[#49BBBD]/90 text-white font-bold py-2 px-4 rounded"
+        >
+          Bắt Đầu Bài Kiểm Tra Mới
+        </Button>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {results.map((result) => (
+          <Card key={result._id} className="w-full">
+            <CardHeader>
+              <CardTitle className="text-lg">Lần thử: {result.turn}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 gap-2 text-sm">
+                <div>
+                  <p className="text-gray-500">Điểm số</p>
+                  <p className="font-bold">{result.score}</p>
+                </div>
+                <div>
+                  <p className="text-gray-500">Câu hỏi</p>
+                  <p className="font-bold">{result.totalAnswered}/{result.totalQuestions}</p>
+                </div>
+                <div>
+                  <p className="text-gray-500">Câu đúng</p>
+                  <p className="font-bold">{result.correctAnswers}</p>
+                </div>
+                <div>
+                  <p className="text-gray-500">Thời gian (phút)</p>
+                  <p className="font-bold">{Math.floor(result.duration / 60)}</p>
+                </div>
+                <div>
+                  <p className="text-gray-500">Ngày thi</p>
+                  <p className="font-bold">{new Date(result.createdAt).toLocaleDateString('vi-VN')}</p>
+                </div>
+              </div>
+            </CardContent>
+            <CardFooter>
+              <Button 
+                onClick={() => handleViewResult(result.exam._id, result.turn)}
+                className="w-full bg-[#49BBBD] hover:bg-[#49BBBD]/90 text-white"
+              >
+                Xem Chi Tiết
+              </Button>
+            </CardFooter>
+          </Card>
+        ))}
+      </div>
     </div>
-  )
+  );
 }
 

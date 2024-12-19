@@ -1,0 +1,38 @@
+{
+    "name": "EngoPro AI Dictionary",
+    "description": "Translate English word to Vietnamese work by AI powered by EngoPro",
+    "version": "1.0",
+    "manifest_version": 3,
+    "permissions": ["activeTab"],
+    "icons": {
+        "48": "loading-ai-gen-image.png"
+    },
+    "action": {
+        "default_icon": "loading-ai-gen-image.png"
+    },
+    "background": {
+        "service_worker": "background.js"
+    },
+    "content_scripts": [
+        {
+            "matches": ["<all_urls>"],
+            "js": ["content.js", "libs/marked.min.js", "libs/spin.min.js"],
+            "css": ["styles.css"],
+            "type": "module"
+        }
+    ],
+    "web_accessible_resources": [
+        {
+            "resources": ["buttonTemplate.html", "styles.css"],
+            "matches": ["<all_urls>"]
+        },
+        {
+            "resources": ["popup.html", "styles.css"],
+            "matches": ["<all_urls>"]
+        },
+        {
+            "resources": ["libs/marked.min.js"],
+            "matches": ["<all_urls>"]
+        }
+    ]
+}

@@ -1,11 +1,13 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import * as z from "zod"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -13,20 +15,47 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Plus } from 'lucide-react'
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
+import {
+  addVocabulary,
+  updateVocabulary,
+} from "@/lib/actions/vocabulary.action";
+import { VocabularySet } from "@/types/vocabulary";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Plus } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 
-const formSchema = z.object({
+export const formSchema = z.object({
   englishWord: z.string().min(1, { message: "Từ tiếng Anh là bắt buộc" }),
   definition: z.string().min(1, { message: "Định nghĩa là bắt buộc" }),
   wordType: z.string().min(1, { message: "Loại từ là bắt buộc" }),
-  example: z.string().min(1, { message: "Ví dụ là bắt buộc" }),
-})
+  example: z.string(),
+});
 
-export function CreateWordForm() {
-  const [open, setOpen] = useState(false)
+interface CreateWordFormProps {
+  onSuccess?: (newVocabulary: VocabularySet) => void;
+  onEdit?: (word: VocabularySet) => void;
+  editWord: VocabularySet | null;
+  setEditWord: (word: VocabularySet | null) => void;
+  open: boolean;
+  setOpen: (open: boolean) => void;
+}
+
+export function CreateWordForm({
+  onSuccess,
+  onEdit,
+  editWord,
+  setEditWord,
+  open,
+  setOpen,
+}: CreateWordFormProps) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -36,16 +65,86 @@ export function CreateWordForm() {
       wordType: "",
       example: "",
     },
-  })
+  });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
-    setOpen(false)
-    form.reset()
+  // Update form values when editWord changes
+  useEffect(() => {
+    if (editWord) {
+      form.reset({
+        englishWord: editWord.englishWord,
+        definition: editWord.definition,
+        wordType: editWord.wordType,
+        example: editWord.example.join("\n"),
+      });
+    } else {
+      form.reset({
+        englishWord: "",
+        definition: "",
+        wordType: "",
+        example: "",
+      });
+    }
+  }, [editWord]);
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      setIsSubmitting(true);
+      if (editWord) {
+        // Handle edit
+        const data = await updateVocabulary(editWord._id, values);
+        if (data.message) {
+          throw new Error(data.message);
+        }
+        toast({
+          title: "Success",
+          description: "Word updated successfully",
+          variant: "success",
+        });
+
+        onEdit?.(data);
+      } else {
+        // Handle create
+        const data = await addVocabulary(values);
+
+        if (data.message) {
+          throw new Error(data.message);
+        }
+
+        toast({
+          title: "Success",
+          description: "Word added successfully",
+          variant: "success",
+        });
+
+        onSuccess?.(data);
+      }
+
+      setOpen(false);
+      form.reset();
+      setEditWord(null);
+    } catch (error) {
+      console.error("Error creating/updating vocabulary:", error);
+      toast({
+        title: "Error",
+        description: "Failed to save word. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog
+      open={open}
+      onOpenChange={(newOpen) => {
+        setOpen(newOpen);
+        if (!newOpen) {
+          setEditWord(null);
+          form.reset();
+        }
+      }}
+    >
       <DialogTrigger asChild>
         <Button className="bg-[#49BBBD] hover:bg-[#49BBBD]/90">
           <Plus className="mr-2 h-4 w-4" /> Thêm từ mới
@@ -53,7 +152,7 @@ export function CreateWordForm() {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Thêm từ mới</DialogTitle>
+          <DialogTitle>{editWord ? "Sửa từ" : "Thêm từ mới"}</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -90,7 +189,10 @@ export function CreateWordForm() {
                 <FormItem>
                   <FormLabel>Loại từ</FormLabel>
                   <FormControl>
-                    <Input placeholder="Nhập loại từ" {...field} />
+                    <Input
+                      placeholder="Nhập loại từ (v, n, adj, adv)"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -101,19 +203,33 @@ export function CreateWordForm() {
               name="example"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Ví dụ</FormLabel>
+                  <FormLabel>Ví dụ (không bắt buộc)</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="Nhập ví dụ" {...field} />
+                    <Textarea
+                      placeholder="Nhập ví dụ (mỗi ví dụ một dòng)"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit" className="bg-[#49BBBD] hover:bg-[#49BBBD]/90">Thêm từ</Button>
+            <Button
+              type="submit"
+              className="bg-[#49BBBD] hover:bg-[#49BBBD]/90"
+              disabled={isSubmitting}
+            >
+              {isSubmitting
+                ? editWord
+                  ? "Đang sửa..."
+                  : "Đang thêm..."
+                : editWord
+                  ? "Sửa từ"
+                  : "Thêm từ mới"}
+            </Button>
           </form>
         </Form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
-
