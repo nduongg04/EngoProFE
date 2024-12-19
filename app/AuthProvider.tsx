@@ -1,11 +1,15 @@
+'use client'
+
 import { auth } from "@/auth";
 import { SessionProvider } from "next-auth/react";
+import { Suspense } from "react";
 
-export default async function AuthProvider({
+export default function AuthProvider({
     children,
 }: {
     children: React.ReactNode;
 }) {
-    const session = await auth();
-    return <SessionProvider session={session}>{children}</SessionProvider>;
+    return (
+				<SessionProvider>{children}</SessionProvider>
+		);
 }

@@ -56,7 +56,7 @@ export default function SignupPage() {
   const dispatch = useAppDispatch();
   useEffect(() => {
     dispatch(disableAIChat());
-  }, []);
+  }, [dispatch]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),

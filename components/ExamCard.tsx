@@ -1,5 +1,7 @@
+"use client";
 import Image from "next/image";
 import { Button } from "./ui/button";
+import { useRouter } from "next/navigation";
 
 export type ExamCardProps = {
   id: string;
@@ -22,6 +24,7 @@ const ExamCard = ({
   partCount,
   tags,
 }: ExamCardProps) => {
+	const router = useRouter();
   return (
     <div className="flex h-fit cursor-pointer flex-col gap-2 rounded-lg border border-black/15 p-4 hover:shadow-[0_18px_47px_0px_rgba(47,50,125,0.1)]">
       <div className="flex gap-2 text-sm text-lightGray">
@@ -53,7 +56,9 @@ const ExamCard = ({
           </div>
         ))}
       </div>
-      <Button className="border border-black/15 bg-white text-[#252641] shadow-none hover:bg-lightGreen/40">
+      <Button className="border border-black/15 bg-white text-[#252641] shadow-none hover:bg-lightGreen/40" onClick={() => {
+				router.push(`/tests/${id}`);
+			}}>
         Chi tiết
       </Button>
     </div>

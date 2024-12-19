@@ -1,6 +1,5 @@
 "use client";
 
-import HeaderHomeWhite from "@/components/HeaderHomeWhite";
 import DetailSection from "@/components/landing-page/DetailSection";
 import HeaderLandingPage from "@/components/landing-page/HeaderLandingPageBar";
 import HeroSection from "@/components/landing-page/HeroSection";

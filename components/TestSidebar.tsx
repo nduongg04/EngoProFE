@@ -1,53 +1,63 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { Fallback } from "@radix-ui/react-avatar";
-import Image from "next/image";
 import { useState } from "react";
 
-const TestSidebar = () => {
+interface ExamType {
+  _id: string;
+  book: string;
+  examType: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface Exam {
+  _id: string;
+  testId: string;
+  testTitle: string;
+  audioUrl: string;
+  examType: ExamType;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface TestSidebarProps {
+  exams: Exam[];
+}
+
+const TestSidebar = ({ exams }: TestSidebarProps) => {
   const [shownExamType, setShownExamType] = useState<{
     [key: string]: boolean;
-  }>({
-    TOEIC: false,
-    IELTS: false,
-  });
+  }>({});
   const [shownBookId, setShownBook] = useState("");
-  const [tests, setTests] = useState([
-    {
-      examType: "TOEIC",
-      books: [
-        { id: "1", name: "Cambrige 18" },
-        { id: "2", name: "Cambrige 18" },
-        { id: "3", name: "Cambrige 18" },
-        { id: "4", name: "Cambrige 18" },
-      ],
-    },
-    {
-      examType: "IELTS",
-      books: [
-        { id: "1", name: "Cambrige 18" },
-        { id: "2", name: "Cambrige 18" },
-        { id: "3", name: "Cambrige 18" },
-        { id: "4", name: "Cambrige 18" },
-      ],
-    },
-  ]);
+
+  // Group exams by exam type and book
+  const groupedExams = exams.reduce((acc, exam) => {
+    const examType = exam.examType.examType;
+    const book = exam.examType.book;
+    
+    if (!acc[examType]) {
+      acc[examType] = new Set();
+    }
+    acc[examType].add(book);
+    
+    return acc;
+  }, {} as { [key: string]: Set<string> });
 
   return (
     <div className="test-sidebar bg-gray-200 flex h-fit flex-col gap-2 rounded-md border border-[#B4B4B4]/60 bg-[#D8D8D8]/30 py-4 pl-5 pr-5">
-      {tests.map((test) => (
-        <div className="flex flex-col gap-2">
+      {Object.entries(groupedExams).map(([examType, books]) => (
+        <div key={examType} className="flex flex-col gap-2">
           <div
             className="transition-primary group flex min-w-32 cursor-pointer items-center justify-between text-lg font-medium hover:text-lightGreen"
             onClick={() => {
               setShownExamType({
                 ...shownExamType,
-                [test.examType]: !shownExamType[test.examType],
+                [examType]: !shownExamType[examType],
               });
             }}
           >
-            {test.examType}
+            {examType}
             <svg
               width="17"
               height="10"
@@ -56,7 +66,7 @@ const TestSidebar = () => {
               xmlns="http://www.w3.org/2000/svg"
               className={cn(
                 "transition-all duration-300 ease-in-out",
-                shownExamType[test.examType] && "rotate-180",
+                shownExamType[examType] && "rotate-180",
               )}
             >
               <path
@@ -67,25 +77,26 @@ const TestSidebar = () => {
           </div>
           <div
             className={`overflow-hidden ${
-              shownExamType[test.examType] ? "h-fit" : "h-0"
+              shownExamType[examType] ? "h-fit" : "h-0"
             } transition-all duration-300 ease-in-out`}
           >
             <ul
               className={`ml-3 flex flex-col gap-3 transition-all ${
-                shownExamType[test.examType] ? "mt-0" : "mt-[-100%]"
+                shownExamType[examType] ? "mt-0" : "mt-[-100%]"
               } duration-300 ease-in-out`}
             >
-              {test.books.map((book) => (
+              {Array.from(books).map((book) => (
                 <li
+                  key={book}
                   className={cn(
                     "flex cursor-pointer items-center gap-2 transition-colors duration-300 hover:text-lightGreen",
-                    shownBookId === book.id && "text-lightGreen",
+                    shownBookId === book && "text-lightGreen",
                   )}
                   onClick={() => {
-                    setShownBook(book.id === shownBookId ? "" : book.id);
+                    setShownBook(book === shownBookId ? "" : book);
                   }}
                 >
-                  {book.name}
+                  {book}
                 </li>
               ))}
             </ul>

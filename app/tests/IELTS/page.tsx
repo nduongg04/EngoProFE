@@ -1,11 +1,9 @@
-import HeaderHomeWhite from "@/components/HeaderHomeWhite";
 import TestsListQuestion from "@/components/tests/ListQuestion";
 import { Card, CardContent } from "@/components/ui/card";
 
 const IELTSExam = () => {
     return (
-        <div className="min-h-screen bg-[#F8F9FA]">
-            <HeaderHomeWhite />
+        <div className="flex-1 bg-[#F8F9FA]">
             <div className="flex flex-col gap-4">
                 <div className="mt-5 flex items-center justify-center gap-2 font-semibold">
                     IELTS Cambridge 18 listening test

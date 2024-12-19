@@ -5,7 +5,6 @@ import ListQuestion from "@/components/ai-generated-question/test/ListQuestion";
 import AIQuestion from "@/components/ai-generated-question/test/Question";
 import { disableAIChat } from "@/lib/store/slice/chat_slice";
 import {
-  AnsweredQuestion,
   resetCompletedQuestion,
   resetMap,
 } from "@/lib/store/slice/test_ai_slice";
@@ -20,12 +19,11 @@ const TestAIView = () => {
     (state) => state.testAiSlice.dataQuestion,
   );
   const dispatch = useAppDispatch();
-  const { time } = useAppSelector((state) => state.testAiSlice);
   useEffect(() => {
     dispatch(resetCompletedQuestion());
     dispatch(resetMap());
-    dispatch(disableAIChat())
-  }, []);
+    dispatch(disableAIChat());
+  }, [dispatch]);
   useEffect(() => {
     if (dataQuestions.length == 0) {
       redirect("/error");
