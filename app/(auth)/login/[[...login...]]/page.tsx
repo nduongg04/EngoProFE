@@ -63,7 +63,7 @@ export default function LoginPage() {
             throw new Error("Invalid credentials");
 
           default:
-            console.log(result.error);
+            console.error(result.error);
             throw new Error("An error occurred");
         }
       }
@@ -72,7 +72,6 @@ export default function LoginPage() {
       router.refresh(); // This will update the session on the client-side
     } catch (error) {
       const message = getMessage(error);
-      console.log(message);
       form.setError("root", {
         type: "manual",
         message,

@@ -39,14 +39,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             const { _id: id, ...rest } = data.user;
             return {
               token: {
-                access_token: data.access_token,
-                refresh_token: data.refresh_token,
+                access_token: data.accessToken,
+                refresh_token: data.refreshToken,
               },
               id,
               ...rest,
             };
+          } else {
+            throw new Error(data.message);
           }
-          return null;
         } catch (error) {
           return null;
         }
@@ -80,13 +81,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               body: JSON.stringify(body),
             },
           );
-          console.log(response);
 
           if (!response.ok) {
             throw new Error("Failed to sign in with Google");
           }
           const data = await response.json();
-          console.log(data);
 
           user.id = data.user._id;
           user.username = data.user.username;
@@ -106,6 +105,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return true;
     },
     async jwt({ token, user, trigger, session }) {
+      console.log(token, user, trigger, session);
       if (trigger === "update") {
         console.log({ token, session });
         return {
@@ -119,7 +119,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (user) {
         token.accessToken = user.token!.access_token;
         token.refreshToken = user.token!.refresh_token;
-        // const { token: tokenOnUser, ...rest } = user;
         token.user = {
           id: user.id,
           email: user.email,
@@ -129,6 +128,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         };
         return token;
       }
+
+      //TODO: fix calling refresh token multiple times
       const decodedAccessToken = jwtDecode(token.accessToken);
       if (decodedAccessToken.exp! > Date.now() / 1000) {
         return token;

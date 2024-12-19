@@ -24,7 +24,7 @@ const HeaderHomeWhite = () => {
   ];
 
   return (
-    <div className="shadow-gray/6 sticky left-0 top-0 flex items-center justify-between px-10 py-3 shadow-md">
+    <div className="shadow-gray/6 sticky left-0 top-0 flex items-center justify-between px-10 py-3 shadow-md backdrop-blur-md">
       <Link href="/">
         <Image
           src="/assets/icons/logo-white.svg"
