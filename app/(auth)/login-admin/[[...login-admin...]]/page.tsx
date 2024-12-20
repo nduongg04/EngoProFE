@@ -36,7 +36,7 @@ export const handleSocialLogin = (provider: string) => {
   signIn(provider, { callbackUrl: "/" });
 };
 
-export default function LoginPage() {
+export default function LoginAdminPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isPending, setIsPending] = useState(false);
   const router = useRouter();
@@ -100,7 +100,10 @@ export default function LoginPage() {
         </CardHeader>
         <CardContent className="pb-4 pt-0">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="flex flex-col gap-3"
+            >
               <FormField
                 control={form.control}
                 name="email"
@@ -157,14 +160,6 @@ export default function LoginPage() {
                   </FormItem>
                 )}
               />
-              <div className="flex items-center justify-end">
-                <Link
-                  href="/forgot-password"
-                  className="text-xs text-[#49BBBD] hover:underline"
-                >
-                  Forgot password?
-                </Link>
-              </div>
 
               {form.formState.errors.root && (
                 <FormMessage className="text-red-500">
@@ -176,42 +171,10 @@ export default function LoginPage() {
                 type="submit"
                 className="mt-2 h-8 w-full bg-[#49BBBD] text-sm text-white hover:bg-[#49BBBD]/90 disabled:cursor-not-allowed"
               >
-                {isPending ? "Logging in..." : "Log in"}
-              </Button>
-              <Button
-                type="button"
-                className="mt-2 h-8 w-full bg-[#B5C3C3] text-sm text-white disabled:cursor-not-allowed"
-                onClick={hadleLoginWithAdmin}
-              >
-                Start with Admin
+                {isPending ? "Logging in..." : "Log in with Admin"}
               </Button>
             </form>
           </Form>
-          <div className="relative my-2">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t" />
-            </div>
-            <div className="relative flex justify-center text-xs">
-              <span className="text-gray-500 bg-white px-2 text-sm">
-                Or continue with
-              </span>
-            </div>
-          </div>
-          <Button
-            variant="outline"
-            type="button"
-            className="h-8 w-full text-sm"
-            onClick={() => handleSocialLogin("google")}
-          >
-            <Icons.google className="mr-2 h-3 w-3" />
-            Continue with Google
-          </Button>
-          <p className="text-gray-600 mt-2 text-center text-sm">
-            Don&apos;t have an account?{" "}
-            <Link href="/register" className="text-[#49BBBD] hover:underline">
-              Register
-            </Link>
-          </p>
         </CardContent>
       </Card>
     </div>
