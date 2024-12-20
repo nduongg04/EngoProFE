@@ -109,7 +109,9 @@ export default function LoginAdminPage() {
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-[#49BBBD]/20 to-white p-2">
       <Card className="w-full max-w-md rounded-xl border border-[#49BBBD]/20 bg-white/95 shadow-lg backdrop-blur-sm transition-all duration-300 hover:shadow-xl">
         <CardHeader className="space-y-0 pb-2 pt-4 text-center">
-          <h2 className="text-gray-800 text-2xl font-bold">Welcome Back</h2>
+          <h2 className="text-gray-800 text-2xl font-bold">
+            Welcome Back Admin
+          </h2>
           <p className="text-gray-600 text-sm">Log in to your account</p>
         </CardHeader>
         <CardContent className="pb-4 pt-0">

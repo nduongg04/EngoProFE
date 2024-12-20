@@ -22,7 +22,7 @@ export async function middleware(req: NextRequest) {
       return Response.redirect(newUrl);
     }
     if (!data.isAdmin) {
-      const newUrl = new URL("/login", req.nextUrl.origin);
+      const newUrl = new URL("/login-admin", req.nextUrl.origin);
 
       return Response.redirect(newUrl);
     }
