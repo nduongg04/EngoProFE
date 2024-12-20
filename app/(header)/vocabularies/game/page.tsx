@@ -106,7 +106,7 @@ export default async function VocabGamePage() {
   const vocabularies = await getVocabularies();
 
   return (
-    <div className="min-h-screen w-full bg-gray-50">
+    <div className="flex-1 w-full bg-gray-50">
       <VocabMatchGame vocabList={vocabularies as VocabularySet[]} />
     </div>
   )

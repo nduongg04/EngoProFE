@@ -1,7 +1,7 @@
 "use server";
 
-import { authenticatedFetch } from "./fetch.action";
 import { auth } from "@/auth";
+import { authenticatedFetch } from "./fetch.action";
 const submitExam = async (
   testId: string,
   answeredQuestions: any,
@@ -42,4 +42,12 @@ const getAllExamResult = async (testId: string) => {
   return data;
 };
 
-export { submitExam, getExamResult, getAllExamResult };
+const deleteExam = async (examId: string) => {
+  await authenticatedFetch(
+    `${process.env.BACKEND_URL}/exam/${examId}`,
+    { method: "DELETE" },
+  );
+
+};
+
+export { deleteExam, getAllExamResult, getExamResult, submitExam };

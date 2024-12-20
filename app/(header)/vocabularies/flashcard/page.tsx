@@ -67,11 +67,11 @@ const FlashCardPage = () => {
   };
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col items-center gap-5 bg-white">
+    <div className="relative flex flex-1 w-full flex-col items-center justify-center gap-5 bg-white">
       {isAllDone ? (
         <div
           className={cn(
-            "absolute flex min-h-screen w-full flex-col items-center justify-center gap-5 bg-white",
+            "absolute flex flex-1 w-full flex-col items-center justify-center gap-5 bg-white",
           )}
         >
           <p className="text-[35px] font-bold">All Done!!</p>
@@ -105,7 +105,7 @@ const FlashCardPage = () => {
       ) : (
         <div
           className={cn(
-            "absolute flex min-h-screen w-full flex-col items-center justify-center gap-5 bg-white",
+            "absolute flex flex-1 w-full flex-col items-center justify-center gap-5 bg-white",
           )}
         >
           <p className="text-[35px] font-bold">Flashcard - New words 1</p>
