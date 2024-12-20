@@ -10,6 +10,7 @@ const submitExam = async (
   const session = await auth();
   console.log("testId", testId);
   console.log("answeredQuestions", answeredQuestions);
+  console.log("answeredQuestions", answeredQuestions);
   const data = await authenticatedFetch(
     `${process.env.NEXT_PUBLIC_API_URL}/exam/submit`,
     {
