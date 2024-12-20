@@ -125,24 +125,9 @@ const FlashCardPage = () => {
           />
           <div className="flex gap-3">
             <button
-              className="rounded-lg bg-[#F04D6A] px-20 py-3 text-white shadow-cus hover:opacity-80"
-              onClick={() => {
-                if (forwardRef.current) {
-                  if (currentIndex < arrayData.length - 1) {
-                    forwardRef.current.nextCard();
-                    handleNextCar();
-                  } else {
-                    setAllDone(true);
-                  }
-                }
-              }}
-            >
-              Bỏ qua
-            </button>
-            <button
               className={cn(
                 "rounded-lg px-20 py-3 text-white shadow-cus",
-                isDaNho ? "bg-[#B5C3C3]" : "bg-[#49BD70] hover:opacity-80",
+                isDaNho ? "bg-[#B5C3C3]" : "bg-[#F04D6A] hover:opacity-80",
               )}
               onClick={() => {
                 if (forwardRef.current && flipCardRef.current) {
@@ -158,6 +143,23 @@ const FlashCardPage = () => {
 
                     setIsDaNho(false);
                   }, 5000);
+                }
+              }}
+            >
+              Chưa nhớ
+            </button>
+            <button
+              className={cn(
+                "rounded-lg bg-[#49BD70] px-20 py-3 text-white shadow-cus hover:opacity-80",
+              )}
+              onClick={() => {
+                if (forwardRef.current) {
+                  if (currentIndex < arrayData.length - 1) {
+                    forwardRef.current.nextCard();
+                    handleNextCar();
+                  } else {
+                    setAllDone(true);
+                  }
                 }
               }}
               disabled={isDaNho}
