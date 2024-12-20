@@ -15,11 +15,10 @@ const ResultPage = () => {
   const dataQuestions = useAppSelector(
     (state) => state.testAiSlice.dataQuestion,
   );
-  const { userAnswerMap } = useAppSelector((state) => state.testAiSlice);
 
   useEffect(() => {
-    if (dataQuestions.length == 0 || userAnswerMap.size == 0) {
-      redirect("/error");
+    if (dataQuestions.length == 0) {
+      throw new Error("You need to generate questions first");
     }
     dispatch(showAIChat());
   }, []);

@@ -26,7 +26,7 @@ const TestAIView = () => {
   }, [dispatch]);
   useEffect(() => {
     if (dataQuestions.length == 0) {
-      redirect("/error");
+      throw new Error("You need to generate questions first")
     }
   }, []);
   function onSubmit() {
