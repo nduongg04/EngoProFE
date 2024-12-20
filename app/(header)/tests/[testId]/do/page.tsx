@@ -1,17 +1,16 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { useParams } from "next/navigation";
-import Header from "@/components/Header";
-import TimerSubmit from "@/components/TimerSubmit";
 import QuestionNavigation from "@/components/QuestionNavigation";
-import TestContent from "@/components/TestContent";
-import Footer from "@/components/Footer";
 import SubmitModal from "@/components/SubmitModal";
-import type { TestData } from "@/types/test";
-import { authenticatedFetch } from "@/lib/actions/fetch.action";
-import { submitExam } from "@/lib/actions/exam.action";
+import TestContent from "@/components/TestContent";
 import TimeOutModal from "@/components/TimeOutModal";
+import TimerSubmit from "@/components/TimerSubmit";
+import { toast } from "@/hooks/use-toast";
+import { submitExam } from "@/lib/actions/exam.action";
+import { authenticatedFetch } from "@/lib/actions/fetch.action";
+import type { TestData } from "@/types/test";
+import { useParams, useRouter } from "next/navigation";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 type AnsweredQuestions = {
   [key: number]: { questionNumber: number; selectedOption: string }[];
@@ -20,7 +19,6 @@ type AnsweredQuestions = {
 const MAX_TIME_SPENT = 7200;
 
 export default function TestPage() {
-  const { testId } = useParams();
   const [currentPart, setCurrentPart] = useState(1);
   const [answeredQuestions, setAnsweredQuestions] = useState<AnsweredQuestions>(
     {},
@@ -30,6 +28,9 @@ export default function TestPage() {
   const [testData, setTestData] = useState<TestData | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const { testId } = useParams();
+  const router = useRouter();
 
   useEffect(() => {
     console.log(answeredQuestions);
@@ -43,7 +44,7 @@ export default function TestPage() {
         throw new Error("Không thể tải dữ liệu bài thi");
       }
       setTestData(data);
-      setTimeRemaining(data.duration || 7200);
+      setTimeRemaining(MAX_TIME_SPENT);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Đã xảy ra lỗi");
     } finally {
@@ -79,12 +80,20 @@ export default function TestPage() {
         answeredQuestions,
         timeSpent,
       );
+      if (data.message) {
+        toast({
+          title: data.message,
+          description: "Bạn có thể thử lại sau",
+          variant: "destructive",
+        });
+      }
       console.log("data submit exam", data);
+      router.push(`/tests/${testId}`);
     },
-    [testId, answeredQuestions, timeRemaining, testData],
+    [timeRemaining, router],
   );
 
-  // Just handle "nộp bài" button, not submit exam
+  // Just handle "nộp bài" button not submit modal
   const handleSubmitButton = useCallback(async () => {
     const allQuestions = Object.values(answeredQuestions).flat();
     const totalQuestions = testData
@@ -101,7 +110,7 @@ export default function TestPage() {
       });
       await handleSubmitExam(testId as string, answeredQuestions);
     }
-  }, [answeredQuestions, testData, testId]);
+  }, [answeredQuestions, testData, testId, handleSubmitExam]);
 
   const memoizedTestContent = useMemo(
     () => (
@@ -125,7 +134,7 @@ export default function TestPage() {
           testData={testData}
         />
       ),
-    [currentPart, answeredQuestions, testData],
+    [answeredQuestions, testData],
   );
 
   if (error) {
@@ -140,8 +149,7 @@ export default function TestPage() {
   }
 
   return (
-    <div className="bg-gray-50 flex min-h-screen flex-col">
-      <Header />
+    <div className="bg-gray-50 flex flex-1 flex-col">
       <main className="flex flex-1 flex-col md:flex-row">
         <section className="order-2 flex-1 p-4 md:order-1">
           {memoizedTestContent}
@@ -154,7 +162,6 @@ export default function TestPage() {
           {memoizedQuestionNavigation}
         </aside>
       </main>
-      <Footer />
       <SubmitModal
         isOpen={isSubmitModalOpen}
         onClose={() => setIsSubmitModalOpen(false)}
@@ -169,7 +176,10 @@ export default function TestPage() {
       />
       <TimeOutModal
         isOpen={timeRemaining !== null && timeRemaining <= 0}
-        onClose={() => setIsSubmitModalOpen(false)}
+        onClose={() => {
+          setIsSubmitModalOpen(false);
+          router.push(`/tests/${testId}`);
+        }}
         onConfirm={async () => {
           console.log("Bài thi đã được nộp", {
             answeredQuestions,

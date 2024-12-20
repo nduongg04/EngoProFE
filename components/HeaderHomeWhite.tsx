@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "../lib/utils";
 import Profile from "./Profile";
+import { useSession } from "next-auth/react";
 
 const HeaderHomeWhite = () => {
   const pathName = usePathname();
@@ -23,14 +24,19 @@ const HeaderHomeWhite = () => {
     },
   ];
 
+  if (pathName.includes("/login") || pathName.includes("/register")) {
+    return null;
+  }
+
   return (
-    <div className="shadow-gray/6 sticky left-0 top-0 z-10 flex items-center justify-between bg-white px-10 py-3 shadow-md">
+    <div className="shadow-gray/6 sticky left-0 top-0 z-50 flex items-center justify-between bg-white px-10 py-3 shadow-md">
       <Link href="/">
         <Image
           src="/assets/icons/logo-white.svg"
-          alt="logo"
+          alt="EngoPro Logo"
           width={90}
           height={90}
+          priority
         />
       </Link>
       <div className="flex items-center gap-40">

@@ -22,15 +22,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { signUp } from "@/lib/actions/auth.action";
 import { useToast } from "@/hooks/use-toast";
-import { useRouter } from "next/navigation";
+import { signUp } from "@/lib/actions/auth.action";
 import { getMessage } from "@/lib/utils";
-import { handleSocialLogin } from "../../login/[[...login...]]/page";
+import { useRouter } from "next/navigation";
+import { handleSocialLogin } from "../../../(header)/[[...login...]]/page";
 
-import { useAppDispatch } from "@/lib/store/store";
 import { disableAIChat } from "@/lib/store/slice/chat_slice";
-
+import { useAppDispatch } from "@/lib/store/store";
 
 const formSchema = z
   .object({
