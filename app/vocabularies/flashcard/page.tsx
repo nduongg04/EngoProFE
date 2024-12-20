@@ -66,12 +66,6 @@ const FlashCardPage = () => {
     setCurrentIndex(0);
   };
 
-  useEffect(() => {
-    return () => {
-      dispatch(resetFlashCard());
-    };
-  }, []);
-
   return (
     <div className="relative flex min-h-screen w-full flex-col items-center gap-5 bg-white">
       {isAllDone ? (
