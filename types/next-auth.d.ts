@@ -10,7 +10,8 @@ declare module "next-auth" {
     email: string;
     username: string;
     avatar: string;
-		vocabList: Vocabulary[];
+    isAdmin: Boolean;
+    vocabList: Vocabulary[];
   }
 
   interface Session {

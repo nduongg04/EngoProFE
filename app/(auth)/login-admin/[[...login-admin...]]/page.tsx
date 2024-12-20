@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
-import { signIn } from "next-auth/react";
+import { getSession, signIn } from "next-auth/react";
 
 import { Icons } from "@/components/Icons";
 import { Button } from "@/components/ui/button";
@@ -26,21 +26,22 @@ import { useRouter } from "next/navigation";
 
 import { disableAIChat } from "@/lib/store/slice/chat_slice";
 import { useAppDispatch } from "@/lib/store/store";
+import { useToast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
   email: z.string().email("Please enter a valid email"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  password: z.string(),
 });
 
 export const handleSocialLogin = (provider: string) => {
   signIn(provider, { callbackUrl: "/" });
 };
 
-export default function LoginPage() {
+export default function LoginAdminPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isPending, setIsPending] = useState(false);
   const router = useRouter();
-
+  const { toast } = useToast();
   const dispatch = useAppDispatch();
   useEffect(() => {
     dispatch(disableAIChat());
@@ -73,9 +74,22 @@ export default function LoginPage() {
             throw new Error("An error occurred");
         }
       }
-
-      router.push("/");
-      router.refresh(); // This will update the session on the client-side
+      const session = await getSession();
+      console.log("User session:", session);
+      const user = session?.user;
+      if (!user) {
+        throw new Error("Invalid credentials");
+      }
+      if (user.isAdmin) {
+        router.push("admin/upload-toeic");
+        router.refresh(); // This will update the session on the client-side
+      } else {
+        toast({
+          title: "Error",
+          description: "User is not admin. Please try again.",
+          variant: "destructive",
+        });
+      }
     } catch (error) {
       const message = getMessage(error);
       form.setError("root", {
@@ -95,12 +109,17 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-[#49BBBD]/20 to-white p-2">
       <Card className="w-full max-w-md rounded-xl border border-[#49BBBD]/20 bg-white/95 shadow-lg backdrop-blur-sm transition-all duration-300 hover:shadow-xl">
         <CardHeader className="space-y-0 pb-2 pt-4 text-center">
-          <h2 className="text-gray-800 text-2xl font-bold">Welcome Back</h2>
+          <h2 className="text-gray-800 text-2xl font-bold">
+            Welcome Back Admin
+          </h2>
           <p className="text-gray-600 text-sm">Log in to your account</p>
         </CardHeader>
         <CardContent className="pb-4 pt-0">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="flex flex-col gap-3"
+            >
               <FormField
                 control={form.control}
                 name="email"
@@ -157,14 +176,6 @@ export default function LoginPage() {
                   </FormItem>
                 )}
               />
-              <div className="flex items-center justify-end">
-                <Link
-                  href="/forgot-password"
-                  className="text-xs text-[#49BBBD] hover:underline"
-                >
-                  Forgot password?
-                </Link>
-              </div>
 
               {form.formState.errors.root && (
                 <FormMessage className="text-red-500">
@@ -176,42 +187,10 @@ export default function LoginPage() {
                 type="submit"
                 className="mt-2 h-8 w-full bg-[#49BBBD] text-sm text-white hover:bg-[#49BBBD]/90 disabled:cursor-not-allowed"
               >
-                {isPending ? "Logging in..." : "Log in"}
-              </Button>
-              <Button
-                type="button"
-                className="mt-2 h-8 w-full bg-[#B5C3C3] text-sm text-white disabled:cursor-not-allowed"
-                onClick={hadleLoginWithAdmin}
-              >
-                Start with Admin
+                {isPending ? "Logging in..." : "Log in with Admin"}
               </Button>
             </form>
           </Form>
-          <div className="relative my-2">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t" />
-            </div>
-            <div className="relative flex justify-center text-xs">
-              <span className="text-gray-500 bg-white px-2 text-sm">
-                Or continue with
-              </span>
-            </div>
-          </div>
-          <Button
-            variant="outline"
-            type="button"
-            className="h-8 w-full text-sm"
-            onClick={() => handleSocialLogin("google")}
-          >
-            <Icons.google className="mr-2 h-3 w-3" />
-            Continue with Google
-          </Button>
-          <p className="text-gray-600 mt-2 text-center text-sm">
-            Don&apos;t have an account?{" "}
-            <Link href="/register" className="text-[#49BBBD] hover:underline">
-              Register
-            </Link>
-          </p>
         </CardContent>
       </Card>
     </div>

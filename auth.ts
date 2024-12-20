@@ -122,6 +122,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           email: user.email,
           username: user.username,
           avatar: user.avatar,
+          isAdmin: user.isAdmin,
           vocabList: user.vocabList,
         };
         return token;
@@ -165,6 +166,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         username: token.user.username,
         avatar: token.user.avatar,
         vocabList: token.user.vocabList,
+        isAdmin: token.user.isAdmin,
         emailVerified: new Date(),
       };
       if (token.error) {
