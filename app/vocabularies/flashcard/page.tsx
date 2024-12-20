@@ -74,7 +74,6 @@ const FlashCardPage = () => {
 
   return (
     <div className="relative flex min-h-screen w-full flex-col items-center gap-5 bg-white">
-      <HeaderVocab />
       {isAllDone ? (
         <div
           className={cn(
