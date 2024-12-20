@@ -16,9 +16,7 @@ export type ExamCardProps = {
 
 const ExamCard = ({
   id,
-  type,
   title,
-  maxScore,
   time,
   questionCount,
   partCount,

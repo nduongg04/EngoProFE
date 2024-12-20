@@ -15,7 +15,7 @@ export default function TimerSubmit({ timeRemaining, onSubmit }: TimerSubmitProp
   }
 
   return (
-    <div className="mb-2 text-center sticky top-0 z-10 bg-white">
+    <div className="mb-2 text-center sticky top-[70px] z-40 bg-white">
       <Button onClick={onSubmit} className="w-full mb-2 bg-[#49BBBD] hover:bg-[#49BBBD]/90">
         Nộp Bài
       </Button>

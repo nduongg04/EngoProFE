@@ -1,7 +1,5 @@
 "use client";
 
-import Footer from "@/components/Footer";
-import Header from "@/components/Header";
 import Loading from "@/components/Loading";
 import QuestionNavigationResult from "@/components/result/QuestionNavigationResult";
 import ResultContent from "@/components/result/ResultContent";
@@ -10,10 +8,6 @@ import { authenticatedFetch } from "@/lib/actions/fetch.action";
 import type { TestData } from "@/types/test";
 import { useParams, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-
-type AnsweredQuestions = {
-  [key: number]: { questionNumber: number; selectedOption: string }[];
-};
 
 export default function TestPage() {
   const { testId } = useParams();
@@ -74,8 +68,7 @@ export default function TestPage() {
   }
 
   return (
-    <div className="bg-gray-50 flex min-h-screen flex-col">
-      <Header />
+    <div className="bg-gray-50 flex flex-1 flex-col">
       <main className="flex flex-1 flex-col md:flex-row">
         <section className="order-2 flex-1 p-4 md:order-1">
           <ResultContent testData={testData} result={result} />
@@ -84,7 +77,6 @@ export default function TestPage() {
           <QuestionNavigationResult testData={testData!} result={result} />
         </aside>
       </main>
-      <Footer />
     </div>
   );
 }

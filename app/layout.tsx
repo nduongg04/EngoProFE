@@ -4,7 +4,6 @@ import { Roboto_Condensed } from "next/font/google";
 import { AiChat } from "@/components/AIChatIcon";
 import StoreProvider from "./StoreProvider";
 
-import HeaderHomeWhite from "@/components/HeaderHomeWhite";
 import { Inter } from "next/font/google";
 import AuthProvider from "./AuthProvider";
 import "./globals.css";
@@ -31,7 +30,6 @@ export default function RootLayout({
         <AuthProvider>
           <StoreProvider>
             <main className="flex min-h-screen flex-col">
-              <HeaderHomeWhite />
               {children} <AiChat />
             </main>
           </StoreProvider>
