@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-type VocabType = {
+export type VocabType = {
   vocab: string;
   wordType: string;
   examples: string[];
@@ -12,32 +12,7 @@ type initType = {
 };
 
 const initialState: initType = {
-  listVocabFlashCar: [
-    {
-      vocab: "vocabulary",
-      wordType: "n",
-      examples: ["fjdhfjdhkjfhsdjkfsd", "fjdsfjksdfjklsd"],
-      definition: "all the words that a person knows or uses",
-    },
-    {
-      vocab: "vocabulary",
-      wordType: "n",
-      examples: ["fjdhfjdhkjfhsdjkfsd", "fjdsfjksdfjklsd"],
-      definition: "all the words that a person knows or uses",
-    },
-    {
-      vocab: "vocabulary",
-      wordType: "n",
-      examples: ["fjdhfjdhkjfhsdjkfsd", "fjdsfjksdfjklsd"],
-      definition: "all the words that a person knows or uses",
-    },
-    {
-      vocab: "vocabulary",
-      wordType: "n",
-      examples: ["fjdhfjdhkjfhsdjkfsd", "fjdsfjksdfjklsd"],
-      definition: "all the words that a person knows or uses",
-    },
-  ],
+  listVocabFlashCar: [],
 };
 
 export const vocabSlice = createSlice({

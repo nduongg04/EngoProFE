@@ -23,9 +23,16 @@ export const AISecondSection = () => {
   const { data: session } = useSession();
   const subjects: string[] = [
     "Software Engineer",
-    "Địa lí",
-    "Lịch sử",
-    "Web development",
+    "Technology and Innovation",
+    "Environmental Conservation",
+    "Cultural Heritage",
+    "Travel and Tourism",
+    "Space Exploration",
+    "Health and Wellness",
+    "Global Economy",
+    "Education Systems Worldwide",
+    "Sports and Fitness",
+    "Music and Arts",
   ];
   const min: string[] = ["15 phút", "20 phút", "30 phút"];
   const [isLoading, setIsLoading] = useState(false);

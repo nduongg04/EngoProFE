@@ -4,10 +4,17 @@ import { Button } from "@/components/ui/button";
 import BackComponent from "@/components/vocabularies/flashcard/BackComponent";
 import FrontComponent from "@/components/vocabularies/flashcard/FrontComponent";
 import HeaderVocab from "@/components/vocabularies/HeaderFlashCard";
-import { useAppSelector } from "@/lib/store/store";
+import { resetFlashCard } from "@/lib/store/slice/vocab_slice";
+import { useAppDispatch, useAppSelector } from "@/lib/store/store";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-import { forwardRef, MutableRefObject, useRef, useState } from "react";
+import {
+  forwardRef,
+  MutableRefObject,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { FlashcardArray } from "react-quizlet-flashcard";
 import FlashcardArrayProps from "react-quizlet-flashcard/dist/interfaces/IFlashcardArray";
 import { styleText } from "util";
@@ -23,6 +30,7 @@ const FlashCardPage = () => {
   const [isDaNho, setIsDaNho] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const { listVocabFlashCar } = useAppSelector((state) => state.vocabSlice);
+  const dispatch = useAppDispatch();
   const arrayData: FlashCardType[] = listVocabFlashCar.map((item, index) => {
     return {
       id: index + 1,
@@ -57,6 +65,13 @@ const FlashCardPage = () => {
   const resetCar = () => {
     setCurrentIndex(0);
   };
+
+  useEffect(() => {
+    return () => {
+      dispatch(resetFlashCard());
+    };
+  }, []);
+
   return (
     <div className="relative flex min-h-screen w-full flex-col items-center gap-5 bg-white">
       <HeaderVocab />
@@ -86,7 +101,7 @@ const FlashCardPage = () => {
                 "bg-[#49BD70] hover:opacity-80",
               )}
               onClick={() => {
-                router.replace("/vocabularies/games");
+                router.replace("/vocabularies/game");
               }}
               disabled={isDaNho}
             >

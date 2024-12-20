@@ -10,6 +10,8 @@ import {
   deleteVocabulary,
   getVocabularies,
 } from "@/lib/actions/vocabulary.action";
+import { setListFlashCard, VocabType } from "@/lib/store/slice/vocab_slice";
+import { useAppDispatch } from "@/lib/store/store";
 import { VocabularySet } from "@/types/vocabulary";
 import { BookOpen, GraduationCap } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -20,6 +22,7 @@ export default function VocabularyListPage() {
   const [loading, setLoading] = useState(true);
   const [editWord, setEditWord] = useState<VocabularySet | null>(null);
   const [open, setOpen] = useState(false);
+  const dispatch = useAppDispatch();
   const { toast } = useToast();
   const router = useRouter();
 
@@ -31,6 +34,7 @@ export default function VocabularyListPage() {
     try {
       const data = await getVocabularies();
       setVocabularies(data);
+      console.log(data);
     } catch (error) {
       console.error("Error fetching vocabularies:", error);
       toast({
@@ -77,6 +81,20 @@ export default function VocabularyListPage() {
     setVocabularies((prev) => [...prev, newVocabulary]);
   };
 
+  const handleFlashCard = () => {
+    const data: VocabType[] = vocabularies.map((item, index) => {
+      return {
+        definition: item.definition,
+        examples: item.example,
+        vocab: item.englishWord,
+        wordType: item.wordType,
+      };
+    });
+
+    dispatch(setListFlashCard({ listFlashCard: data }));
+    router.push("/vocabularies/flashcard");
+  };
+
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center">
@@ -115,12 +133,18 @@ export default function VocabularyListPage() {
           </div>
         </div>
         <div className="space-y-4 md:col-span-4">
-          <Button className="h-12 w-full bg-[#49BBBD] text-white hover:bg-[#49BBBD]/90">
+          <Button
+            className="h-12 w-full bg-[#49BBBD] text-white hover:bg-[#49BBBD]/90"
+            onClick={handleFlashCard}
+          >
             <BookOpen className="mr-2 h-5 w-5" />
             Flashcards
           </Button>
 
-          <Button className="h-12 w-full bg-[#49BBBD] text-white hover:bg-[#49BBBD]/90" onClick={() => router.push('/vocabularies/game')}>
+          <Button
+            className="h-12 w-full bg-[#49BBBD] text-white hover:bg-[#49BBBD]/90"
+            onClick={() => router.push("/vocabularies/game")}
+          >
             <GraduationCap className="mr-2 h-5 w-5" />
             Bài tập
           </Button>
