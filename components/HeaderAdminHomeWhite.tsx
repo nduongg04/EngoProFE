@@ -16,7 +16,7 @@ const HeaderAdminHomeWhite = () => {
     },
     {
       name: "Xem đề thi",
-      path: "/admin/view-test",
+      path: "/admin/exam",
     },
   ];
 
