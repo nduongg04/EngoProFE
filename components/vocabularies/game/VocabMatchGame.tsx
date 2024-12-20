@@ -180,7 +180,7 @@ export default function VocabMatchGame({ vocabList }: VocabMatchGameProps) {
         </h2>
         <div className="flex items-center gap-4">
           <p className="text-lg">
-            Số cặp đã ghép: {matchedPairs}/{CLUSTER_SIZE}
+            Số cặp đã ghép: {matchedPairs}/{vocabList.length > CLUSTER_SIZE ? CLUSTER_SIZE : vocabList.length}
           </p>
           <Button
             onClick={initializeGame}

@@ -7,23 +7,27 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
-import { useState } from "react";
 
 const Profile = () => {
-  const [username, setUsername] = useState("Nguyễn Văn A");
+  const { data: session } = useSession();
+  if (!session || !session.user) return null;
+  console.log(session.user);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="group focus:outline-none">
         <div className="flex items-center gap-3 font-medium text-gray outline-none">
           <Avatar className="size-8">
-            <AvatarImage src="/assets/images/avatar-placeholder.jpg" />
-            <AvatarFallback className="bg-lightGreen text-white">
-              CN
-            </AvatarFallback>
+            <Image
+              src={session.user.avatar || "/assets/icons/profile-circle.svg"}
+              alt="avatar"
+              width={32}
+              height={32}
+            />
           </Avatar>
           <span className="transition-colors duration-300 group-hover:text-lightGreen">
-            {username}
+            {session.user.username}
           </span>
         </div>
       </DropdownMenuTrigger>

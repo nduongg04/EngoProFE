@@ -42,7 +42,6 @@ const Tests = () => {
   const fetchExams = async () => {
     try {
       const data = await authenticatedFetch(`${BASE_URL}/exam`);
-      console.log(data);
       setExams(data.exams);
     } catch (error) {
       console.error("Error fetching exams:", error);
@@ -57,8 +56,8 @@ const Tests = () => {
     type: exam.examType.examType,
     title: exam.testTitle,
     maxScore: exam.examType.examType === "TOEIC" ? 990 : 9,
-    questionCount: 120, // Default value, adjust as needed
-    partCount: 4, // Default value, adjust as needed
+    questionCount: 200, // Default value, adjust as needed
+    partCount: 7, // Default value, adjust as needed
     tags: [exam.examType.examType, exam.examType.book],
     time: 120, // Default value, adjust as needed
   }));
