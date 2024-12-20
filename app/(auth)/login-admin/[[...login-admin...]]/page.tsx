@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
-import { signIn } from "next-auth/react";
+import { getSession, signIn } from "next-auth/react";
 
 import { Icons } from "@/components/Icons";
 import { Button } from "@/components/ui/button";
@@ -26,10 +26,11 @@ import { useRouter } from "next/navigation";
 
 import { disableAIChat } from "@/lib/store/slice/chat_slice";
 import { useAppDispatch } from "@/lib/store/store";
+import { useToast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
   email: z.string().email("Please enter a valid email"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  password: z.string(),
 });
 
 export const handleSocialLogin = (provider: string) => {
@@ -40,7 +41,7 @@ export default function LoginAdminPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isPending, setIsPending] = useState(false);
   const router = useRouter();
-
+  const { toast } = useToast();
   const dispatch = useAppDispatch();
   useEffect(() => {
     dispatch(disableAIChat());
@@ -73,9 +74,22 @@ export default function LoginAdminPage() {
             throw new Error("An error occurred");
         }
       }
-
-      router.push("/");
-      router.refresh(); // This will update the session on the client-side
+      const session = await getSession();
+      console.log("User session:", session);
+      const user = session?.user;
+      if (!user) {
+        throw new Error("Invalid credentials");
+      }
+      if (user.isAdmin) {
+        router.push("admin/upload-toeic");
+        router.refresh(); // This will update the session on the client-side
+      } else {
+        toast({
+          title: "Error",
+          description: "User is not admin. Please try again.",
+          variant: "destructive",
+        });
+      }
     } catch (error) {
       const message = getMessage(error);
       form.setError("root", {
