@@ -7,6 +7,7 @@ import StoreProvider from "./StoreProvider";
 import { Inter } from "next/font/google";
 import AuthProvider from "./AuthProvider";
 import "./globals.css";
+import AddVocabProvider from "./AddVocabProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -29,9 +30,11 @@ export default function RootLayout({
         <Toaster />
         <AuthProvider>
           <StoreProvider>
-            <main className="flex min-h-screen flex-col">
-              {children} <AiChat />
-            </main>
+            <AddVocabProvider>
+              <main className="flex min-h-screen flex-col">
+                {children} <AiChat />
+              </main>
+            </AddVocabProvider>
           </StoreProvider>
         </AuthProvider>
       </body>

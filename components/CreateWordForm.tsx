@@ -40,10 +40,11 @@ export const formSchema = z.object({
 interface CreateWordFormProps {
   onSuccess?: (newVocabulary: VocabularySet) => void;
   onEdit?: (word: VocabularySet) => void;
-  editWord: VocabularySet | null;
-  setEditWord: (word: VocabularySet | null) => void;
+  editWord?: VocabularySet | null;
+  setEditWord?: (word: VocabularySet | null) => void;
   open: boolean;
   setOpen: (open: boolean) => void;
+  isGlobal: boolean;
 }
 
 export function CreateWordForm({
@@ -53,6 +54,7 @@ export function CreateWordForm({
   setEditWord,
   open,
   setOpen,
+  isGlobal = false,
 }: CreateWordFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
@@ -121,7 +123,7 @@ export function CreateWordForm({
 
       setOpen(false);
       form.reset();
-      setEditWord(null);
+      setEditWord?.(null);
     } catch (error) {
       console.error("Error creating/updating vocabulary:", error);
       toast({
@@ -140,15 +142,22 @@ export function CreateWordForm({
       onOpenChange={(newOpen) => {
         setOpen(newOpen);
         if (!newOpen) {
-          setEditWord(null);
+          setEditWord?.(null);
           form.reset();
         }
       }}
     >
       <DialogTrigger asChild>
-        <Button className="bg-[#49BBBD] hover:bg-[#49BBBD]/90">
-          <Plus className="mr-2 h-4 w-4" /> Thêm từ mới
-        </Button>
+        {isGlobal ? (
+            <Button className="fixed bottom-[80px] right-2.5 bg-[#49BBBD] hover:bg-[#49BBBD]/90 z-50 rounded-full group transition-all duration-500 ease-in-out flex items-center justify-center">
+              <Plus className="h-4 w-4 group-hover:animate-bounce" />
+							<span className="hidden group-hover:block animate-[fadeIn_1s_ease-in-out]">Thêm từ mới</span>
+            </Button>
+        ) : (
+          <Button className="bg-[#49BBBD] hover:bg-[#49BBBD]/90">
+            <Plus className="mr-2 h-4 w-4" /> Thêm từ mới
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>

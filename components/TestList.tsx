@@ -2,11 +2,13 @@ import ExamCard, { ExamCardProps } from "./ExamCard";
 
 type TestListProps = {
   exams: ExamCardProps[];
+  isAdmin?: boolean;
+  onDelete?: (examId: string) => void;
 };
 
-const TestList = ({ exams }: TestListProps) => {
+const TestList = ({ exams, isAdmin, onDelete }: TestListProps) => {
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+    <div className="grid h-fit grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
       {exams.map((exam: ExamCardProps) => (
         <ExamCard
           key={exam.id}
@@ -18,6 +20,8 @@ const TestList = ({ exams }: TestListProps) => {
           partCount={exam.partCount}
           tags={exam.tags}
           time={exam.time}
+          isAdmin={isAdmin}
+          onDelete={() => onDelete?.(exam.id)}
         />
       ))}
     </div>

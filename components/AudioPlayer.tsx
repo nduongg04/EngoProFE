@@ -12,6 +12,7 @@ interface AudioPlayerProps {
 }
 
 const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, onAudioEnd, className, currentPart }) => {
+	console.log("AudioPlayer", audioUrl);
   const [isPlaying, setIsPlaying] = useState(false)
   const audioRef = useRef<HTMLAudioElement | null>(null)
   const [hasStarted, setHasStarted] = useState(false)
