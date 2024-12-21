@@ -5,7 +5,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "../lib/utils";
 import Profile from "./Profile";
-import { useSession } from "next-auth/react";
 
 const HeaderAdminHomeWhite = () => {
   const pathName = usePathname();

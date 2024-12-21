@@ -5,13 +5,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "../lib/utils";
 import Profile from "./Profile";
-import { useSession } from "next-auth/react";
 
 const HeaderHomeWhite = () => {
   const pathName = usePathname();
   const navigations = [
     {
-      name: "Câu hỏi AI",
+      name: "Tạo bộ câu hỏi",
       path: "/ai-generated-questions",
     },
     {
