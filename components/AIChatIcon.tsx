@@ -159,7 +159,7 @@ export const AiChat = () => {
   return (
     <div
       className={cn(
-        "fixed bottom-[10px] right-[10px]",
+        "fixed bottom-[10px] right-[10px] z-50",
         isShowAIChat ? "flex" : "hidden",
       )}
     >

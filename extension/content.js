@@ -12,8 +12,9 @@ document.addEventListener("selectionchange", () => {
     return;
   }
   const startOffset = range.startOffset;
+  console.log(selectedText);
   const context = getContextOfWord(contextNode, selectedText, startOffset);
-
+  console.log(context);
   fetch(chrome.runtime.getURL("buttonTemplate.html"))
     .then((res) => res.text())
     .then((htmlContent) => {
@@ -96,11 +97,9 @@ function fetchAPIBackground(text, context, rect) {
 
 function getContextOfWord(node, selectedText, startOffset) {
   let textContent = node.textContent || "";
-
   if (node.nodeType !== Node.TEXT_NODE) {
     textContent = node.parentNode.textContent || "";
   }
-
   const sentences = [];
   let regex = /[^.!?]+[.!?]/g;
   let match;
@@ -111,7 +110,7 @@ function getContextOfWord(node, selectedText, startOffset) {
       end: match.index + match[0].length,
     });
   }
-
+  if (sentences.length == 0) return textContent;
   for (const sentence of sentences) {
     if (
       sentence.text.includes(selectedText) &&
