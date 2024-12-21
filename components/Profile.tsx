@@ -7,13 +7,18 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 
 const Profile = () => {
   const { data: session } = useSession();
   if (!session || !session.user) return null;
   console.log(session.user);
+  async function logout() {
+    const result = await signOut({
+      redirectTo: "/login",
+    });
+  }
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="group focus:outline-none">
@@ -43,7 +48,10 @@ const Profile = () => {
           />
           Profile
         </DropdownMenuItem>
-        <DropdownMenuItem className="flex min-w-32 cursor-pointer items-center gap-3 text-base">
+        <DropdownMenuItem
+          className="flex min-w-32 cursor-pointer items-center gap-3 text-base"
+          onClick={logout}
+        >
           <Image
             src="/assets/icons/logout-circle.svg"
             alt="logout"
