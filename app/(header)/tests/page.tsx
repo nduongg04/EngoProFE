@@ -3,12 +3,11 @@
 import Loading from "@/components/Loading";
 import TestList from "@/components/TestList";
 import TestSidebar from "@/components/TestSidebar";
-import { authenticatedFetch } from "@/lib/actions/fetch.action";
+import { getAllExam } from "@/lib/actions/exam.action";
 import { showAIChat } from "@/lib/store/slice/chat_slice";
 import { useAppDispatch } from "@/lib/store/store";
 import { useEffect, useState } from "react";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
 interface ExamType {
   _id: string;
@@ -41,7 +40,8 @@ const Tests = () => {
 
   const fetchExams = async () => {
     try {
-      const data = await authenticatedFetch(`${BASE_URL}/exam`);
+      const data = await getAllExam();
+      console.log(data);
       setExams(data.exams);
     } catch (error) {
       console.error("Error fetching exams:", error);
@@ -75,7 +75,7 @@ const Tests = () => {
         <div className="flex w-full flex-1 gap-2 lg:gap-20">
           <TestSidebar exams={exams} />
           {loading ? (
-            <div className="flex m-auto">
+            <div className="m-auto flex">
               <Loading />
             </div>
           ) : (

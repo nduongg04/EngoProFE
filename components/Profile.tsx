@@ -1,3 +1,6 @@
+'use client'
+
+import { useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -9,59 +12,78 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
+import { UserProfileDialog } from "./UserProfileDialog";
 
 const Profile = () => {
   const { data: session } = useSession();
+  const [isProfileDialogOpen, setIsProfileDialogOpen] = useState(false);
+
   if (!session || !session.user) return null;
-  console.log(session.user);
+
   async function logout() {
-    const result = await signOut({
+    await signOut({
       redirectTo: "/login",
     });
   }
+
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger className="group focus:outline-none">
-        <div className="flex items-center gap-3 font-medium text-gray outline-none">
-          <Avatar className="size-8">
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger className="group focus:outline-none">
+          <div className="flex items-center gap-3 font-medium text-gray outline-none">
+            <Avatar className="size-8">
+              <AvatarImage
+                src={session.user.avatar || "/assets/icons/profile-circle.svg"}
+                alt="avatar"
+              />
+              <AvatarFallback>{session.user.username?.slice(0, 2).toUpperCase()}</AvatarFallback>
+            </Avatar>
+            <span className="transition-colors duration-300 group-hover:text-[#49BBBD]">
+              {session.user.username}
+            </span>
+          </div>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuLabel className="text-base">Tài khoản của tôi</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem 
+            className="flex min-w-32 cursor-pointer items-center gap-3 text-base"
+            onClick={() => setIsProfileDialogOpen(true)}
+          >
             <Image
-              src={session.user.avatar || "/assets/icons/profile-circle.svg"}
-              alt="avatar"
-              width={32}
-              height={32}
+              src="/assets/icons/profile-circle.svg"
+              alt="profile"
+              width={20}
+              height={20}
             />
-          </Avatar>
-          <span className="transition-colors duration-300 group-hover:text-lightGreen">
-            {session.user.username}
-          </span>
-        </div>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent>
-        <DropdownMenuLabel className="text-base">My Account</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem className="flex min-w-32 cursor-pointer items-center gap-3 text-base">
-          <Image
-            src="/assets/icons/profile-circle.svg"
-            alt="profile"
-            width={20}
-            height={20}
-          />
-          Profile
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          className="flex min-w-32 cursor-pointer items-center gap-3 text-base"
-          onClick={logout}
-        >
-          <Image
-            src="/assets/icons/logout-circle.svg"
-            alt="logout"
-            width={20}
-            height={20}
-          />
-          Logout
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+            Hồ sơ
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            className="flex min-w-32 cursor-pointer items-center gap-3 text-base"
+            onClick={logout}
+          >
+            <Image
+              src="/assets/icons/logout-circle.svg"
+              alt="logout"
+              width={20}
+              height={20}
+            />
+            Đăng xuất
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      <UserProfileDialog
+        isOpen={isProfileDialogOpen}
+        onClose={() => setIsProfileDialogOpen(false)}
+        userId={session.user.id!}
+        initialUsername={session.user.username || ''}
+        initialEmail={session.user.email || ''}
+        initialAvatarUrl={session.user.avatar || '/assets/icons/profile-circle.svg'}
+      />
+    </>
   );
 };
+
 export default Profile;
+

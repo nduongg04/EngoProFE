@@ -2,15 +2,17 @@
 
 import { auth } from "@/auth";
 import { authenticatedFetch } from "./fetch.action";
+const getAllExam = async () => {
+  const data = await authenticatedFetch(`${process.env.BACKEND_URL}/exam/all`);
+  return { exams: data };
+};
+
 const submitExam = async (
   testId: string,
   answeredQuestions: any,
   timeSpent: number,
 ) => {
   const session = await auth();
-  console.log("testId", testId);
-  console.log("answeredQuestions", answeredQuestions);
-  console.log("answeredQuestions", answeredQuestions);
   const data = await authenticatedFetch(
     `${process.env.NEXT_PUBLIC_API_URL}/exam/submit`,
     {
@@ -51,4 +53,4 @@ const deleteExam = async (examId: string) => {
 
 };
 
-export { deleteExam, getAllExamResult, getExamResult, submitExam };
+export { deleteExam, getAllExamResult, getExamResult, submitExam, getAllExam };

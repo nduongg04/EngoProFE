@@ -8,7 +8,7 @@ export const authenticatedFetch = async (url: string, options?: RequestInit) => 
     const response = await fetch(url, {
       ...options,
       headers: {
-				"Content-Type": "application/json",
+				// "Content-Type": "application/json",
 				Authorization: `Bearer ${session?.accessToken}`,
 				...options?.headers,
 			}
@@ -19,8 +19,8 @@ export const authenticatedFetch = async (url: string, options?: RequestInit) => 
       throw new Error(data.message);
     }
     return data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error fetching data:", error);
-    return { error: "Error fetching data" };
+    return { error: "Error fetching data", message: error.message };
   }
 };

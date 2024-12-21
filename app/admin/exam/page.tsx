@@ -5,7 +5,7 @@ import Loading from "@/components/Loading";
 import TestList from "@/components/TestList";
 import TestSidebar from "@/components/TestSidebar";
 import { toast } from "@/hooks/use-toast";
-import { deleteExam } from "@/lib/actions/exam.action";
+import { deleteExam, getAllExam } from "@/lib/actions/exam.action";
 import { authenticatedFetch } from "@/lib/actions/fetch.action";
 import { useEffect, useState } from "react";
 
@@ -40,7 +40,7 @@ const Tests = () => {
 
   const fetchExams = async () => {
     try {
-      const data = await authenticatedFetch(`${BASE_URL}/exam`);
+      const data = await getAllExam();
       setExams(data.exams);
     } catch (error) {
       console.error("Error fetching exams:", error);
