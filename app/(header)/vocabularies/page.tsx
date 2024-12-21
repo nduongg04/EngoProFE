@@ -1,6 +1,7 @@
 "use client";
 
 import { CreateWordForm } from "@/components/CreateWordForm";
+import Loading from "@/components/Loading";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Card } from "@/components/ui/card";
@@ -82,7 +83,7 @@ export default function VocabularyListPage() {
   };
 
   const handleFlashCard = () => {
-    const data: VocabType[] = vocabularies.map((item, index) => {
+    const data: VocabType[] = vocabularies.map((item) => {
       return {
         definition: item.definition,
         examples: item.example,
@@ -97,9 +98,7 @@ export default function VocabularyListPage() {
 
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center">
-        <div className="text-lg">Loading...</div>
-      </div>
+      <Loading />
     );
   }
 
@@ -112,6 +111,7 @@ export default function VocabularyListPage() {
               Vocabulary List - {vocabularies.length} words
             </h1>
             <CreateWordForm
+              isGlobal={false}
               onSuccess={handleAddVocabulary}
               editWord={editWord}
               setEditWord={setEditWord}
@@ -146,7 +146,7 @@ export default function VocabularyListPage() {
             onClick={() => router.push("/vocabularies/game")}
           >
             <GraduationCap className="mr-2 h-5 w-5" />
-            Bài tập
+						Game
           </Button>
 
           <Card className="max-w-fit p-4">

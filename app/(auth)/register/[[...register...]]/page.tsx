@@ -26,10 +26,10 @@ import { useToast } from "@/hooks/use-toast";
 import { signUp } from "@/lib/actions/auth.action";
 import { getMessage } from "@/lib/utils";
 import { useRouter } from "next/navigation";
-import { handleSocialLogin } from "../../../(header)/[[...login...]]/page";
 
 import { disableAIChat } from "@/lib/store/slice/chat_slice";
 import { useAppDispatch } from "@/lib/store/store";
+import { handleSocialLogin } from "../../login/[[...login...]]/page";
 
 const formSchema = z
   .object({
@@ -88,6 +88,7 @@ export default function SignupPage() {
         toast({
           title: "Account created successfully",
           description: "You can now log in with your new account.",
+					variant: "success"
         });
         router.push("/login");
       }
@@ -105,6 +106,10 @@ export default function SignupPage() {
       setIsPending(false);
     }
   }
+
+	useEffect(() => {
+		console.log(avatarSrc);
+	}, [avatarSrc]);
 
   const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
