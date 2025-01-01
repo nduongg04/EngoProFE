@@ -87,10 +87,6 @@ export default function LoginPage() {
     }
   }
 
-  const hadleLoginWithAdmin = () => {
-    router.push("/login-admin");
-  };
-
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-[#49BBBD]/20 to-white p-2">
       <Card className="w-full max-w-md rounded-xl border border-[#49BBBD]/20 bg-white/95 shadow-lg backdrop-blur-sm transition-all duration-300 hover:shadow-xl">
@@ -177,13 +173,6 @@ export default function LoginPage() {
                 className="mt-2 h-8 w-full bg-[#49BBBD] text-sm text-white hover:bg-[#49BBBD]/90 disabled:cursor-not-allowed"
               >
                 {isPending ? "Logging in..." : "Log in"}
-              </Button>
-              <Button
-                type="button"
-                className="mt-2 h-8 w-full bg-[#B5C3C3] text-sm text-white disabled:cursor-not-allowed"
-                onClick={hadleLoginWithAdmin}
-              >
-                Start with Admin
               </Button>
             </form>
           </Form>
