@@ -1,34 +1,36 @@
 import { auth } from "@/auth";
 import { getToken } from "next-auth/jwt";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export default auth((req) => {
-  if (!req.auth || req.auth.error === "RefreshTokenError") {
-    const newUrl = new URL("/login", req.nextUrl.origin);
-
-    return Response.redirect(newUrl);
-  }
-});
-
-export async function middleware(req: NextRequest) {
+export default async function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
-
+  // Admin routes middleware
   if (pathname.startsWith("/admin")) {
     const token = await getToken({ req, secret: process.env.AUTH_SECRET });
     const data = token?.user;
     if (!data) {
-      const newUrl = new URL("/login", req.nextUrl.origin);
-
-      return Response.redirect(newUrl);
+      return NextResponse.redirect(new URL("/login", req.url));
     }
     if (!data.isAdmin) {
-      const newUrl = new URL("/login-admin", req.nextUrl.origin);
-
-      return Response.redirect(newUrl);
+      return NextResponse.redirect(new URL("/login-admin", req.url));
     }
+    return NextResponse.next();
   }
+
+  // Auth middleware for non-admin routes
+  const session = await auth();
+  if (!session || session.error === "RefreshTokenError") {
+    return NextResponse.redirect(new URL("/login", req.url));
+  }
+
+  return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/", "/admin/:path*"],
+  matcher: [
+    // Apply auth middleware to all routes except public ones
+    "/((?!api|_next/static|_next/image|favicon.ico|login|register|landing-page|login-admin).*)",
+    // Apply admin middleware to admin routes
+    "/admin/:path*"
+  ]
 };

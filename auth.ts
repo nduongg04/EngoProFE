@@ -49,6 +49,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             throw new Error(data.message);
           }
         } catch (error) {
+          console.error("Error signing in with credentials", error);
           return null;
         }
       },
