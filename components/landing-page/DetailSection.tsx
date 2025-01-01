@@ -108,7 +108,7 @@ const DetailSection = () => {
         </div>
         <Image
           src={"/assets/images/tool_teacher_image.svg"}
-          alt=""
+          alt="Teacher tools"
           width={500}
           height={500}
         />
